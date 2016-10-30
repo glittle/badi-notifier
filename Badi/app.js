@@ -27,8 +27,8 @@ storage.initSync({
 //console.log(storage.keys());
 //console.log(storage.getItem('reminders'));
 
-var secrets = storage.getItem('secrets');
-const timezonedb = require('timezonedb-node')(secrets.timeZoneKey);
+// var secrets = storage.getItem('secrets');
+const timezonedb = require('timezonedb-node')(process.env.TIMEZONEKEY);
 var verses = null;
 
 
@@ -902,6 +902,6 @@ function announceTo(whoId, msg) {
 app.get('/', (req, res) => {
     res.send('Welcome');
 });
-app.listen(3000, function () {
+app.listen(function () {
   console.log('Example app listening on port 3000!');
 });
