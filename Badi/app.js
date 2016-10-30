@@ -1,8 +1,7 @@
 ﻿'use strict';
-const http = require('http');
+const app = require('express')();
 const fs = require('fs');
 const glob = require('glob');
-const Bot = require('messenger-bot');
 const storage = require('node-persist');
 const moment = require('moment-timezone');
 const extend = require('node.extend');
@@ -33,40 +32,35 @@ const timezonedb = require('timezonedb-node')(secrets.timeZoneKey);
 var verses = null;
 
 
-let bot = new Bot({
-  token: secrets.botKey,
-  verify: 'MyBadiBot'
-});
+// bot.on('message', (payload, reply) => {
 
-bot.on('message', (payload, reply) => {
+//   var senderId = payload.sender.id;
+//   var key = makeKeys(senderId);
 
-  var senderId = payload.sender.id;
-  var key = makeKeys(senderId);
+//   var profile = storage.getItem(key.profile);
+//   //  var log = storage.getItem(key.log);
 
-  var profile = storage.getItem(key.profile);
-  //  var log = storage.getItem(key.log);
-
-  if (profile) {
-    try {
-      respond(profile, payload.message, key);
-    } catch (e) {
-      console.log(e.stack);
-      bot.sendMessage(profile.id, { text: sorryMsg });
-    }
-  } else {
-    bot.getProfile(payload.sender.id, (err, profile) => {
-      if (err) throw err
-      profile.id = senderId;
-      profile.firstVisit = moment().format();
-      try {
-        respond(profile, payload.message, key);
-      } catch (e) {
-        console.log(e.stack);
-        bot.sendMessage(profile.id, { text: sorryMsg });
-      }
-    });
-  }
-});
+//   if (profile) {
+//     try {
+//       respond(profile, payload.message, key);
+//     } catch (e) {
+//       console.log(e.stack);
+//       bot.sendMessage(profile.id, { text: sorryMsg });
+//     }
+//   } else {
+//     bot.getProfile(payload.sender.id, (err, profile) => {
+//       if (err) throw err
+//       profile.id = senderId;
+//       profile.firstVisit = moment().format();
+//       try {
+//         respond(profile, payload.message, key);
+//       } catch (e) {
+//         console.log(e.stack);
+//         bot.sendMessage(profile.id, { text: sorryMsg });
+//       }
+//     });
+//   }
+// });
 
 function respond(profile, payloadMessage, keys) {
   var senderId = profile.id;
@@ -896,11 +890,18 @@ function announceTo(whoId, msg) {
   sendAllAnswers('announce', [msg], profile, keys);
 }
 
-bot.on('error', (err) => {
-  console.log(err.message)
-})
+// bot.on('error', (err) => {
+//   console.log(err.message)
+// })
 
-prepareReminderTimer();
-loadVersesAsync();
+// prepareReminderTimer();
+// loadVersesAsync();
 
-http.createServer(bot.middleware()).listen(1844);
+
+
+app.get('/', (req, res) => {
+    res.send('Welcome');
+});
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
+});

@@ -1,42 +1,31 @@
 {
-  "name": "badi-messenger-bot",
-  "version": "1.0.0",
-  "description": "Badi Messenger Bot",
-  "main": "Badi/app.js",
+  "name": "badi-notifier",
+  "version": "0.0.1",
+  "description": "Badi Notifier",
   "keywords": [
-    "messenger",
-    "api",
-    "client",
     "Baha'i",
     "Badi",
-    "bot"
+    "Wondrous",
+    "notifier"
   ],
   "author": "Glen Little <glen.little@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/glittle/badi-messenger-bot/issues"
+    "url": "https://github.com/glittle/badi-notifier/issues"
   },
-  "homepage": "https://github.com/glittle/badi-messenger-bot",
+  "homepage": "https://github.com/glittle/badi-notifier",
   "dependencies": {
+    "express": "4.13.4",
     "fs": "0.0.2",
     "glob": "^7.0.5",
-    "http": "0.0.0",
-    "messenger-bot": "^2.3.0",
     "moment": "^2.13.0",
     "moment-timezone": "^0.5.4",
     "node-persist": "0.0.11",
     "node.extend": "^1.1.5",
-    "request": "^2.71.0"
+    "request": "^2.71.0",
+    "timezonedb-node": "^1.0.7"
   },
-  "files": [
-    "Badi"
-  ],
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/glittle/badi-messenger-bot.git"
+    "start": "node Badi/app.js"
   }
 }
