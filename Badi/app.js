@@ -902,6 +902,8 @@ function announceTo(whoId, msg) {
 app.get('/', (req, res) => {
     res.send('Welcome');
 });
-app.listen(function () {
+
+var port = process.env.PORT || 3000;
+app.listen(port, function() {
   console.log('Example app listening on port 3000!');
 });
