@@ -1,5 +1,7 @@
 ﻿'use strict';
-const app = require('express')();
+const express = require('express');
+const app = express();
+
 const fs = require('fs');
 const glob = require('glob');
 const storage = require('node-persist');
@@ -899,8 +901,10 @@ function announceTo(whoId, msg) {
 
 
 
-app.get('/', (req, res) => {
-    res.send('Welcome');
+app.use(express.static('../web'));
+
+app.get('/', function (req, res) {
+  res.send('Hello World!');
 });
 
 var port = process.env.PORT || 3000;

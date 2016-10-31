@@ -1,0 +1,293 @@
+/* top options group */
+.SelectorArea {
+  margin-bottom: 10px;
+}
+.Selectors {
+  display: block;
+  margin: 0 6px 0px 6px;
+  padding: 0;
+  vertical-align: middle;
+}
+p.Beta {
+  margin-bottom: 25px;
+}
+.Clear {
+  clear: left;
+}
+/* year + number */
+.SelectorArea {
+  float: left;
+  margin: 0 10px 10px 0;
+}
+.SelectorOptions {
+  float: left;
+  margin: 0 10px 10px 5px;
+}
+.Selectors div.YearSelect {
+  margin: -6px 0 8px 5px;
+  display: inline-block;
+}
+.Selectors > Span {
+  display: inline-block;
+  float: left;
+  line-height: 10px;
+  vertical-align: middle;
+  padding: 10px 10px 10px 10px;
+  margin: 0 2px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.Selectors label {
+  cursor: pointer;
+}
+.SelectorOptions > span {
+  display: block;
+}
+.SelectorArea .YearComment {
+  margin-left: 10px;
+  display: inline-block;
+}
+.Hidden {
+  display: none;
+}
+/* checkbox */
+.Selectors input {
+  display: inline;
+  vertical-align: middle;
+}
+/* table */
+table#List {
+  background-color: #DED6D4;
+  padding-bottom: 1px;
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 3px;
+}
+#List td,
+#List th {
+  padding: 0 10px 0 10px;
+  white-space: nowrap;
+}
+#List th.Gregorian {
+  font-weight: normal;
+  font-style: italic;
+}
+#List td.FastTimes {
+  white-space: nowrap;
+}
+td.blank {
+  background-color: #f9f7f5;
+}
+td.ForFeast,
+td.ForStartTime,
+th.ForFeast,
+th.ForStartTime,
+tr.Feast,
+tr.HolyDay,
+tr.Fast,
+.Today,
+tr.OtherDay {
+  display: none;
+}
+.List.ShowFeast tr.Feast {
+  display: table-row;
+}
+.List.ShowFeast td.ForFeast {
+  display: table-cell;
+}
+.List.ShowFeast th.ForFeast {
+  display: table-cell;
+}
+.List.ShowFast tr.Fast {
+  display: table-row;
+}
+.List.ShowHolyDay tr.HolyDay {
+  display: table-row;
+}
+.List.ShowHolyDay td.ForStartTime {
+  display: table-cell;
+}
+.List.ShowHolyDay th.ForStartTime {
+  display: table-cell;
+}
+.List.ShowOther tr.OtherDay {
+  display: table-row;
+}
+tr#NoSelection {
+  display: none;
+  background: #fee;
+}
+tr#NoSelection td {
+  font-style: italic;
+  text-align: center;
+  padding-right: 300px;
+}
+.List.NoSelection tr#NoSelection {
+  display: table-row;
+}
+td.Feast,
+tr.Feast,
+select.Feast {
+  background-color: #E7E1DE;
+}
+td.Feast:hover,
+tr.Feast:hover {
+  background-color: #F7F1EE;
+}
+.HolyDayHS {
+  background-color: #C7E1CE;
+}
+tr.HolyDayHS:hover {
+  background-color: #D7F1DE;
+}
+.HolyDayHO {
+  background-color: #D7F1DE;
+}
+tr.HolyDayHO:hover {
+  background-color: #E7F1EE;
+}
+.OtherDay {
+  background-color: #f8f2ef;
+}
+tr.OtherDay:hover {
+  background-color: #ffffff;
+}
+.Today {
+  background-color: #f1c1f6;
+}
+tr.Today:hover {
+  background-color: #ffffff;
+}
+.Fast {
+  background-color: #F1DED7;
+}
+tr.Fast:hover {
+  background-color: #FFEEE7;
+}
+tr.NotDefined {
+  background-color: #f8f2ef;
+  color: red;
+}
+#List tr.NotDefined td {
+  padding: 1em 0;
+  text-align: center;
+  font-style: italic;
+}
+td.Time,
+th.Time {
+  text-align: center;
+}
+th.Num,
+td.Num {
+  text-align: center;
+}
+td.Name1,
+td.Name2 {
+  white-space: nowrap;
+}
+.eveInfo {
+  color: #bbb;
+  display: none;
+}
+#content.ShowEve .eveInfo {
+  display: inline;
+}
+#content.ShowToday td.Today {
+  display: table-cell;
+}
+#content.ShowToday tr.Today {
+  display: table-row;
+}
+label[for=ShowToday] {
+  color: #ccc;
+}
+.hasToday label[for=ShowToday] {
+  color: #000;
+}
+.Sunset,
+.Sunrise {
+  display: none;
+  text-align: center;
+}
+#content.ShowSunset span.Sunrise {
+  display: inline;
+}
+#content.ShowSunset th.Sunset,
+#content.ShowSunset td.Sunset {
+  display: table-cell;
+}
+div.Sunset {
+  display: none;
+  line-height: normal;
+  font-style: italic;
+  text-align: left;
+}
+#content.ShowSunset div.Sunset {
+  display: block;
+  margin-left: 10px:;
+}
+#content.ShowSunset span.Sunset {
+  display: inline;
+}
+.help {
+  cursor: help;
+  background: url(../images/info2.gif) bottom no-repeat;
+  height: 13px;
+  width: 13px;
+  margin-left: 2px;
+  display: inline-block;
+  vertical-align: baseline;
+}
+#lat,
+#long {
+  width: 80px;
+}
+.LatLong {
+  vertical-align: top;
+}
+#latLongName {
+  text-align: left;
+  font-style: italic;
+}
+.LatLong button {
+  font-size: 90%;
+  padding: 0;
+  margin: 0 1px 0 1px;
+}
+.LatLong .Sunset {
+  margin-left: 19px;
+}
+.LatLong .Indent {
+  margin-left: 19px;
+}
+select#StartTime {
+  font-style: italic;
+}
+p.footer {
+  margin-top: 15px;
+  text-align: right;
+  font-style: italic;
+}
+#printBtnArea {
+  float: right;
+}
+#printBtnArea button {
+  font-size: 90%;
+}
+/*
+.Selectors{
+  margin: 0 0 10px 3px;
+}
+.Selectors span{
+padding: 2px 6px 2px 1px;
+}
+*/
+@media print {
+  #header,
+  #footer,
+  h2,
+  #thisismyurl_slideshow,
+  .skip-content {
+    display: none;
+  }
+}
