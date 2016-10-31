@@ -2,6 +2,7 @@
   "name": "badi-notifier",
   "version": "0.0.1",
   "description": "Badi Notifier",
+  "private": true,
   "keywords": [
     "Baha'i",
     "Badi",
@@ -23,7 +24,16 @@
     "node-persist": "0.0.11",
     "node.extend": "^1.1.5",
     "request": "^2.71.0",
-    "timezonedb-node": "^1.0.7"
+    "timezonedb-node": "^1.0.7",
+    "vash": "^0.12.2",
+
+    "body-parser": "~1.9.2",
+    "errorhandler": "~1.2.2",
+    "express-session": "~1.9.1",
+    "method-override": "~2.3.0",
+    "morgan": "~1.5.0",
+    "multer": "~0.1.6",
+    "serve-favicon": "~2.1.6"
   },
   "scripts": {
     "start": "node Badi/app.js"

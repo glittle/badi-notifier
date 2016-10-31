@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Wondrous by glittle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    @html.block('head')
+</head>
+
+<body>
+    <section class="page-header">
+        <h1 class="project-name">The Wondrous Calendar</h1>
+        <h2 class="project-tagline">Tools for the Badí' Calendar</h2>
+        <h2 class="project-tagline">Beta Version!</h2>
+        <a href="listing" class="btn">Feasts &amp; Holy Days</a>
+        <a href="notify" class="btn">Daily Notifications</a>
+    </section>
+
+    <section class="main-content">
+        <p>This site is under development as of October 2016...</p>
+
+        @html.block('content')
+
+        <footer class="site-footer">
+            @html.block('footer')
+            <span class="site-footer-owner">This <a href="https://badi-notifier.herokuapp.com/">Badí' Notifier</a> is created and maintained by <a href="https://github.com/glittle">Glen Little</a>.</span>
+            <span class="site-footer-credits">This page uses the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+        </footer>
+
+    </section>
+
+@html.block('scripts')
+</body>
+
+</html>

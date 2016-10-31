@@ -1,6 +1,20 @@
 ﻿'use strict';
-const express = require('express');
-const app = express();
+var express = require('express')
+  , routes = require('./routes')
+  , path = require('path')
+
+var favicon = require('serve-favicon')
+  , logger = require('morgan')
+  , methodOverride = require('method-override')
+  , session = require('express-session')
+  , bodyParser = require('body-parser')
+  , multer = require('multer')
+  , errorHandler = require('errorhandler')
+
+var app = express();
+
+
+//-------
 
 const fs = require('fs');
 const glob = require('glob');
@@ -901,13 +915,41 @@ function announceTo(whoId, msg) {
 
 
 
-app.use(express.static(__dirname + '/web'));
+// app.use(express.static(__dirname + '/web'));
 
-app.get('/', function (req, res) {
-  res.send('Hello World!');
-});
+// app.get('/', function (req, res) {
+//   res.send('Hello World!');
+// });
 
-var port = process.env.PORT || 3000;
-app.listen(port, function() {
-  console.log(`Example app listening on port ${port}!`);
+// var port = process.env.PORT || 3000;
+// app.listen(port, function() {
+//   console.log(`Example app listening on port ${port}!`);
+// });
+
+
+///////
+
+app.set('port', process.env.PORT || 3000);
+app.set('views', path.join( __dirname, '/views') ); // critical to use path.join on windows
+app.set('view engine', 'vash');
+app.use(favicon(__dirname + '/web/favicon.ico'));
+app.use(logger('dev'));
+app.use(methodOverride());
+// app.use(session({ resave: true,
+//                   saveUninitialized: true,
+//                   secret: 'blarg blarg' }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(multer());
+
+app.use(express.static(path.join(__dirname, 'web')));
+
+app.use('/', routes);
+
+if (app.get('env') == 'development'){
+  app.use(errorHandler());
+}
+
+app.listen(app.get('port'), function(){
+  console.log("Express server listening on port " + app.get('port'));
 });

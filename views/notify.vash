@@ -1,0 +1,31 @@
+@html.extend('_layout', function(model){ 
+@html.block('content', function(model){
+        
+    <h3>Automatic notifications</h3>
+
+    <p>in development...</p>
+
+});
+
+@html.block('scripts', function (model){
+  <script src="js/notify.js"></script>
+});
+
+@html.block('head', function(model){
+
+  <link rel="stylesheet" type="text/css" href="stylesheets/notify.css">
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	crossorigin="anonymous"></script>
+  <script>
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(["init", {
+      appId: "2b535ce7-1ca1-4950-813f-2d89c9f281c2",
+      autoRegister: false,
+      notifyButton: {
+        enable: true /* Set to false to hide */
+      }
+    }]);
+  </script>
+});
+});
