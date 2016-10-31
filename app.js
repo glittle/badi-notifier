@@ -7,8 +7,8 @@ const glob = require('glob');
 const storage = require('node-persist');
 const moment = require('moment-timezone');
 const extend = require('node.extend');
-const badiCalc = require('./badiCalc');
-const sunCalc = require('./sunCalc');
+const badiCalc = require('./Badi/badiCalc');
+const sunCalc = require('./Badi/sunCalc');
 const os = require('os');
 
 //const forceNewMessageChar = '$%';
@@ -827,7 +827,7 @@ function addVerse(profile, answers) {
 }
 
 function loadVersesAsync(cb) {
-  fs.readFile('verses.json', 'utf8', (err, data) => {
+  fs.readFile(__dirname + '/Badi/verses.json', 'utf8', (err, data) => {
     if (err) {
       console.log('Verses failed to load...');
       console.log(err);
@@ -901,7 +901,7 @@ function announceTo(whoId, msg) {
 
 
 
-app.use(express.static('../web'));
+app.use(express.static(__dirname + '/web'));
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
@@ -909,5 +909,5 @@ app.get('/', function (req, res) {
 
 var port = process.env.PORT || 3000;
 app.listen(port, function() {
-  console.log('Example app listening on port 3000!');
+  console.log(`Example app listening on port ${port}!`);
 });

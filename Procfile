@@ -1,1 +1,1 @@
-web: node Badi/app.js
+web: node app.js
