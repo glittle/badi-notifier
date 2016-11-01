@@ -23,6 +23,7 @@ const moment = require('moment-timezone');
 const extend = require('node.extend');
 const badiCalc = require('./Badi/badiCalc');
 const sunCalc = require('./Badi/sunCalc');
+const notifications = require('./notifications');
 const os = require('os');
 
 //const forceNewMessageChar = '$%';
@@ -122,14 +123,14 @@ function respond(profile, payloadMessage, keys) {
                 var answerText = greatSometimes('! ') + 'Thanks for your location!';
 
                 bot.sendMessage(senderId,
-                {
-                  text: answerText
-                },
-                (err) => {
-                  if (err) {
-                    console.log(err);
-                  }
-                });
+                  {
+                    text: answerText
+                  },
+                  (err) => {
+                    if (err) {
+                      console.log(err);
+                    }
+                  });
 
                 notifyDeveloper(`New user: ${profile.first_name} in zone ${tzInfo.zoneName}`);
 
@@ -152,27 +153,27 @@ function respond(profile, payloadMessage, keys) {
           console.log(JSON.stringify(payloadMessage.attachments));
           var answer = thanksSometimes() + ':)';
           bot.sendMessage(senderId,
-                {
-                  text: answer // smiley
-                },
-               (err) => {
-                 if (err) {
-                   console.log(err);
-                 }
-               });
+            {
+              text: answer // smiley
+            },
+            (err) => {
+              if (err) {
+                console.log(err);
+              }
+            });
           break;
 
         default:
           console.log(JSON.stringify(payloadMessage.attachments));
           bot.sendMessage(senderId,
-               {
-                 text: 'Thanks, but I don\'t know what to do with that!'
-               },
-               (err) => {
-                 if (err) {
-                   console.log(err);
-                 }
-               });
+            {
+              text: 'Thanks, but I don\'t know what to do with that!'
+            },
+            (err) => {
+              if (err) {
+                console.log(err);
+              }
+            });
           break;
       }
     }
@@ -393,7 +394,7 @@ function answerQuestions(question, profile, keys, answers) {
     } else {
       if (question === 'Remind after location update') {
         answers.push('Now you can tell me when to remind you by saying, for example, "remind at 8" for 8 in the morning ' +
-            'or "remind at sunset" for when the new day is starting.');
+          'or "remind at sunset" for when the new day is starting.');
       } else {
         answers.push(`Sorry, ${profile.first_name}. I didn't find any reminders for you.`);
       }
@@ -423,7 +424,7 @@ function answerQuestions(question, profile, keys, answers) {
 
         if (userTime.isValid()) {
           answers.push(greatSometimes(', ') + `${profile.first_name}. I'll try to let you know around ${userTime
-           .format('HH:mm')} about the Badí' date.`);
+            .format('HH:mm')} about the Badí' date.`);
 
           when = moment(userTime).subtract(hourDifference, 'hours').format('HH:mm');
           details.userTime = userTime.format('HH:mm');
@@ -523,9 +524,9 @@ function sendAllAnswers(question, answers, profile, keys, originalAnswers) {
       //      var wantNewMessage = answerText.indexOf(forceNewMessageChar) === 0;
 
       if (!answers.length // past the end
-          || (answerText && (answerText + answers[0]).length > maxAnswerLength)
+        || (answerText && (answerText + answers[0]).length > maxAnswerLength)
         //          || wantNewMessage
-          || answers[0] === '') {
+        || answers[0] === '') {
 
         //        if (wantNewMessage) {
         //          answerText = answerText.replace(forceNewMessageChar, '');
@@ -911,7 +912,6 @@ function announceTo(whoId, msg) {
 // })
 
 // prepareReminderTimer();
-// loadVersesAsync();
 
 
 
@@ -930,7 +930,7 @@ function announceTo(whoId, msg) {
 ///////
 
 app.set('port', process.env.PORT || 3000);
-app.set('views', path.join( __dirname, '/views') ); // critical to use path.join on windows
+app.set('views', path.join(__dirname, '/views')); // critical to use path.join on windows
 app.set('view engine', 'vash');
 app.use(favicon(__dirname + '/web/favicon.ico'));
 app.use(logger('dev'));
@@ -944,12 +944,27 @@ app.use(multer());
 
 app.use(express.static(path.join(__dirname, 'web')));
 
+
+app.post('/test', function (req, res) {
+  notifications.sendTest(req.body.user, req.body.what);
+  res.send({
+    success: true
+  });
+})
+
+app.post('/setWhen', function (req, res) {
+  var success = notifications.setWhen(req.body);
+  res.send({
+    success: success
+  });
+})
+
 app.use('/', routes);
 
-if (app.get('env') == 'development'){
+if (app.get('env') == 'development') {
   app.use(errorHandler());
 }
 
-app.listen(app.get('port'), function(){
+app.listen(app.get('port'), function () {
   console.log("Express server listening on port " + app.get('port'));
 });

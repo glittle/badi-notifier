@@ -2,17 +2,19 @@
 @html.block('content', function(model){
 
 <div class="supported">
+    <p id="step1_">1. ...</p>
     <p class="step1" id="step1_false">1. Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
     <p class="step1" id="step1_true">1. Your location is reported as "<span class="locationEcho"></span>".</p>
 
+    <p id="step2_">2. ...</p>
     <p class="step2" id="step2_false">2. Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
     <p class="step2" id="step2_true">2. This computer is ready to get notifications.</p>
 
     <p>3. When do you want to be notified?</p>
     <ul class="when">
-        <li><label><input type="checkbox"> In the evening at sunset</label> <button class="testNow">Test Now!</button></li>
-        <li><label><input type="checkbox"> In the morning at sunrise</label> <button class="testNow">Test Now!</button></li>
-        <li><label><input type="checkbox"> At <input type="time"></label> <button class="testNow">Test Now!</button></li>
+        <li id="whenSunset"><label><input type="checkbox"> In the evening at sunset</label> <button class="testNow">Test Now!</button></li>
+        <li id="whenSunrise"><label><input type="checkbox"> In the morning at sunrise</label> <button class="testNow">Test Now!</button></li>
+        <li id="whenCustom"><label><input type="checkbox"> At <input type="time"></label> <button class="testNow">Test Now!</button></li>
     </ul>
 </div>
 <div class="notSupported">

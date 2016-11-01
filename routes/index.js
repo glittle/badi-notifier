@@ -19,4 +19,12 @@ router.get('/notify', function (req, res) {
   res.render('notify');
 });
 
+var v = require('../verses');
+
+router.get('/verse', function (req, res) {
+  res.render('verse', v);
+});
+
+
+
 module.exports = router;

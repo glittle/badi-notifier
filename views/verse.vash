@@ -1,0 +1,23 @@
+@html.extend('_layout', function(model){ 
+@html.block('content', function(model){
+
+@{ 
+    var v = model.getVerse();
+    console.log(v); 
+}
+<h3>Verse</h3>
+
+<p class="prefix">@v.prefix</p>
+<p class="verse">@v.verse</p>
+<p class="suffix">@v.suffix</p>
+
+});
+
+@html.block('scripts', function (model){
+  <script src="js/verse.js"></script>
+});
+
+@html.block('head', function(model){
+  <link rel="stylesheet" type="text/css" href="stylesheets/verse.css">
+});
+});

@@ -1,6 +1,9 @@
 var Notify = function () {
-    var _locationLat = null;
-    var _locationLong = null;
+    var settings = {
+        locationLat: null,
+        locationLong: null,
+        userId: null
+    };
 
     function prepare() {
         // OneSignal.isPushNotificationsEnabled(function (isEnabled) {
@@ -15,7 +18,7 @@ var Notify = function () {
             /* These examples are all valid */
             OneSignal.getUserId(function (userId) {
                 showStep(2, userId != null);
-                console.log("OneSignal User ID:", userId);
+                settings.userId = userId;
                 // (Output) OneSignal User ID: 270a35cd-4dda-4b3f-b04e-41d7463a2316    
             });
         });
@@ -34,6 +37,8 @@ var Notify = function () {
 
         $('#btnGetLocation').click(btnGetLocation);
         $('#btnEnableNotification').click(btnEnableNotification);
+        $('.testNow').click(btnTestNow);
+        $('.when').on('change', 'input[type=checkbox]', setWhen)
 
         if (localStorage.locationName) {
             showLocationName(localStorage.locationName);
@@ -41,12 +46,64 @@ var Notify = function () {
             showStep(1, false);
         }
     }
-    
+
+    function setWhen(ev) {
+        if (!settings.userId) {
+            console.log('no userid... cannot test');
+            return;
+        }
+        var input = $(ev.target);
+        var li = input.closest('li');
+        var what = li.attr('id');
+        callAjax('/setWhen', {
+            user: settings.userId,
+            what: what,
+            checked: input.prop('checked'),
+            when: what === 'whenCustom' ? li.find('input[type=time]').val() : null
+        },
+            function (info) {
+                console.log(info);
+            });
+
+    }
+
+    function btnTestNow(ev) {
+        if (!settings.userId) {
+            console.log('no userid... cannot test');
+            return;
+        }
+        var btn = $(ev.target);
+        var what = btn.closest('li').attr('id');
+        callAjax('/test', { user: settings.userId, what: what }, function (info) {
+            console.log(info);
+        });
+    }
+
+    function callAjax(url, data, cbSuccess, cbFailure) {
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            method: 'post',
+            data: data,
+            cache: false,
+            success: function (data, status, xhr) {
+                cbSuccess(data);
+            },
+            error: function (xhr, status, error) {
+                if (xhr.responseText) {
+                    var info = JSON.parse(xhr.responseText);
+                    console.log(info.error.message);
+                    console.log(info.error.stack);
+                }
+            }
+        });
+    }
+
     function btnGetLocation() {
         try {
             navigator.geolocation.getCurrentPosition(function (loc) {
-                localStorage.lat = _locationLat = loc.coords.latitude;
-                localStorage.long = _locationLong = loc.coords.longitude;
+                localStorage.lat = settings.locationLat = loc.coords.latitude;
+                localStorage.long = settings.locationLong = loc.coords.longitude;
                 getLocationName();
             })
         } catch (e) {
@@ -61,7 +118,7 @@ var Notify = function () {
     }
 
     function getLocationName() {
-        var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + _locationLat + ',' + _locationLong
+        var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + settings.locationLat + ',' + settings.locationLong
         $.ajax({
             url: url,
             dataType: 'json',
@@ -90,12 +147,14 @@ var Notify = function () {
     }
 
     function showStep(num, show) {
+        $(`#step${num}_`).hide();
         $(`#step${num}_false`).toggle(!show);
         $(`#step${num}_true`).toggle(show);
     }
 
     return {
-        prepare: prepare
+        prepare: prepare,
+        settings: settings
     }
 }
 
