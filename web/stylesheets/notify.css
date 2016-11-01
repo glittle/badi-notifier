@@ -13,3 +13,6 @@
 ul.when {
   list-style: none;
 }
+.whenResult {
+  display: none;
+}

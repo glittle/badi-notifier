@@ -3,13 +3,12 @@
 
 @{ 
     var v = model.getVerse();
-    console.log(v); 
 }
-<h3>Verse</h3>
 
-<p class="prefix">@v.prefix</p>
-<p class="verse">@v.verse</p>
-<p class="suffix">@v.suffix</p>
+<h3 class="prefix">@v.prefix</h3>
+<p class="verse">@v.verse
+  <span class="suffix">@v.suffix</span>
+</p>
 
 });
 
@@ -19,5 +18,5 @@
 
 @html.block('head', function(model){
   <link rel="stylesheet" type="text/css" href="stylesheets/verse.css">
-});
-});
+})
+})

@@ -2,12 +2,13 @@ var appId = '2b535ce7-1ca1-4950-813f-2d89c9f281c2';
 var https = require('https');
 
 function sendTest(user, msg) {
-
+   
     var message = {
         app_id: appId,
         contents: {
-            "en": msg
+            "en": msg || 'Test message!'
         },
+        url: 'https://wondrous-badi.herokuapp.com/notify',
         include_player_ids: [user]
     };
     sendNotification(message);
@@ -16,6 +17,7 @@ function sendTest(user, msg) {
 function setWhen(body) {
     console.log(body);
     if (!body.user) {
+        return false;
     }
     // user:c3d2d533-1dab-4e68-ad7a-57e7a41a8403
     // what:whenSunset
@@ -38,16 +40,18 @@ function setWhen(body) {
         case 'whenCustom':
             if (body.checked === 'true') {
                 if (body.when) {
-                    message.contents.send_after = new Date();
-                    message.contents.delayed_option = 'timezone';
-                    message.contents.delivery_time_of_day = body.when;
+                    message.send_after = new Date();
+                    message.delayed_option = 'timezone';
+                    message.delivery_time_of_day = body.when + 'AM';
                     message.contents.en = 'Test at ' + body.when;
                     sendNotification(message);
+                    return true;
                 }
             }
             break;
         default:
     }
+    return false;
 }
 
 function sendNotification(data) {

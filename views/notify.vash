@@ -1,20 +1,26 @@
 @html.extend('_layout', function(model){ 
 @html.block('content', function(model){
 
+<h2>Setup Notifications</h2>
+
 <div class="supported">
-    <p id="step1_">1. ...</p>
-    <p class="step1" id="step1_false">1. Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
-    <p class="step1" id="step1_true">1. Your location is reported as "<span class="locationEcho"></span>".</p>
+    <p id="step1_">&#10144; Checking location status...</p>
+    <p class="step1" id="step1_false">&#10144; Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
+    <p class="step1" id="step1_true">&#10004; Your location is reported as "<span class="locationEcho"></span>".</p>
 
-    <p id="step2_">2. ...</p>
-    <p class="step2" id="step2_false">2. Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
-    <p class="step2" id="step2_true">2. This computer is ready to get notifications.</p>
+    <p id="step2_">&#10144; Checking notification status...</p>
+    <p class="step2" id="step2_false">&#10144; Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
+    <p class="step2" id="step2_true">&#10004; You have enabled notifications on this device.</p>
 
-    <p>3. When do you want to be notified?</p>
+    <p>&#10144;<button class="testNow">Test Now!</button></p>
+
+    <p>&#10144; When do you want to be notified?</p>
     <ul class="when">
-        <li id="whenSunset"><label><input type="checkbox"> In the evening at sunset</label> <button class="testNow">Test Now!</button></li>
-        <li id="whenSunrise"><label><input type="checkbox"> In the morning at sunrise</label> <button class="testNow">Test Now!</button></li>
-        <li id="whenCustom"><label><input type="checkbox"> At <input type="time"></label> <button class="testNow">Test Now!</button></li>
+        <li id="whenSunset"><label><input type="checkbox"> In the evening at sunset</label> </li>
+        <li id="whenSunrise"><label><input type="checkbox"> In the morning at sunrise</label> </li>
+        <li id="whenCustom"><label><input type="checkbox"> At <input type="time"></label> </li>
+        <li class="whenResult whenResult_true">Saved!</li>
+        <li class="whenResult whenResult_false">Not saved</li>
     </ul>
 </div>
 <div class="notSupported">
@@ -47,4 +53,4 @@
     }]);
   </script>
 });
-});
+})

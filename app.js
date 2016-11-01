@@ -946,9 +946,9 @@ app.use(express.static(path.join(__dirname, 'web')));
 
 
 app.post('/test', function (req, res) {
-  notifications.sendTest(req.body.user, req.body.what);
+  notifications.sendTest(req.body.user, 'You just clicked "Test Now!"');
   res.send({
-    success: true
+    success: 'tested'
   });
 })
 

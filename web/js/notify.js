@@ -19,7 +19,7 @@ var Notify = function () {
             OneSignal.getUserId(function (userId) {
                 showStep(2, userId != null);
                 settings.userId = userId;
-                // (Output) OneSignal User ID: 270a35cd-4dda-4b3f-b04e-41d7463a2316    
+                console.log(userId); // leave in console, for help desk support
             });
         });
 
@@ -39,6 +39,9 @@ var Notify = function () {
         $('#btnEnableNotification').click(btnEnableNotification);
         $('.testNow').click(btnTestNow);
         $('.when').on('change', 'input[type=checkbox]', setWhen)
+        $('.when').on('change', 'input[type=time]', function(ev){
+            $(ev.target).closest('li').find('input[type=checkbox]').trigger('change');
+        })
 
         if (localStorage.locationName) {
             showLocationName(localStorage.locationName);
@@ -52,6 +55,7 @@ var Notify = function () {
             console.log('no userid... cannot test');
             return;
         }
+        $('.whenResult').hide();
         var input = $(ev.target);
         var li = input.closest('li');
         var what = li.attr('id');
@@ -63,6 +67,8 @@ var Notify = function () {
         },
             function (info) {
                 console.log(info);
+                $('.whenResult_true').toggle(info.success);
+                $('.whenResult_false').toggle(!info.success);
             });
 
     }
