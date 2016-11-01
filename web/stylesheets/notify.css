@@ -1,0 +1,15 @@
+.supported,
+.notSupported {
+  display: none;
+}
+.step1,
+.step2 {
+  display: none;
+}
+.testNow {
+  font-size: small;
+  margin-left: 10px;
+}
+ul.when {
+  list-style: none;
+}

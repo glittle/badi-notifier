@@ -1,9 +1,24 @@
 @html.extend('_layout', function(model){ 
 @html.block('content', function(model){
-        
-    <h3>Automatic notifications</h3>
 
-    <p>in development...</p>
+<div class="supported">
+    <p class="step1" id="step1_false">1. Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
+    <p class="step1" id="step1_true">1. Your location is reported as "<span class="locationEcho"></span>".</p>
+
+    <p class="step2" id="step2_false">2. Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
+    <p class="step2" id="step2_true">2. This computer is ready to get notifications.</p>
+
+    <p>3. When do you want to be notified?</p>
+    <ul class="when">
+        <li><label><input type="checkbox"> In the evening at sunset</label> <button class="testNow">Test Now!</button></li>
+        <li><label><input type="checkbox"> In the morning at sunrise</label> <button class="testNow">Test Now!</button></li>
+        <li><label><input type="checkbox"> At <input type="time"></label> <button class="testNow">Test Now!</button></li>
+    </ul>
+</div>
+<div class="notSupported">
+    <p>Sorry, this web browser does not support notifications!</p>
+    <p>Please try Chrome or Firefox, or on a Mac you can also try Safari.</p>
+</div>
 
 });
 
@@ -12,17 +27,19 @@
 });
 
 @html.block('head', function(model){
-  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-
   <link rel="stylesheet" type="text/css" href="stylesheets/notify.css">
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
   <script>
     var OneSignal = window.OneSignal || [];
     OneSignal.push(["init", {
       appId: "2b535ce7-1ca1-4950-813f-2d89c9f281c2",
       autoRegister: false,
-      subdomainName: 'hello',
+      subdomainName: "wondrous-badi",
       notifyButton: {
-        enable: true /* Set to false to hide */
+        enable: false
+      },
+      welcomeNotification: {
+          message: 'You are ready for notifications!'
       },
       safari_web_id: 'web.onesignal.auto.2c31ff0c-1624-4aec-8f89-a4f0b1da0ea1'
     }]);
