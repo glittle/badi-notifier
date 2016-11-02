@@ -177,7 +177,7 @@ var Notify = function () {
     }
 
     function getLocationName() {
-        var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + settings.locationLat + ',' + settings.locationlng
+        var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + settings.locationLat + ',' + settings.locationlng
         $.ajax({
             url: url,
             dataType: 'json',
@@ -193,6 +193,7 @@ var Notify = function () {
                             OneSignal.sendTag("location", location);
                             OneSignal.sendTag("zoneName", moment.tz.guess());
                             showLocationInfo(location);
+
                             break;
                         }
                     }
