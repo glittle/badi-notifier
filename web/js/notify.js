@@ -2,6 +2,7 @@ var Notify = function () {
     var settings = {
         locationLat: localStorage.lat,
         locationlng: localStorage.lng,
+        locationName: localStorage.locationName,
         userId: null,
         tags: null
     };
@@ -44,8 +45,8 @@ var Notify = function () {
             }
         })
 
-        if (localStorage.locationName) {
-            showLocationInfo(localStorage.locationName);
+        if (settings.locationName) {
+            showLocationInfo(settings.locationName);
         } else {
             showStep(1, false);
         }
@@ -169,7 +170,7 @@ var Notify = function () {
     }
 
     function showLocationInfo(name) {
-        localStorage.locationName = name;
+        localStorage.locationName = settings.locationName = name;
         $('.locationEcho').text(name);
         showStep(1, true);
         console.log('showed location name');
@@ -210,11 +211,12 @@ var Notify = function () {
     }
 
     function showStep(num, show) {
+        debugger;
         $(`.step${num}_`).hide();
         $(`.step${num}_false`).toggle(!show);
         $(`.step${num}_true`).toggle(show);
         if (num !== 3) {
-            showStep(3, settings.userId != null && localStorage.locationName);
+            showStep(3, settings.userId != null && settings.locationName != undefined);
         }
     }
 

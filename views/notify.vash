@@ -15,7 +15,7 @@
     <blockquote class="step2 step2_true"><button class="testNow">Test Now!</button></blockquote>
 
     <p class="step3 step3_true">&#10004; When do you want to be notified?</p>
-    <blockquote class="step3_true">
+    <blockquote class="step3 step3_true">
         <div id="whenSunset"><label><input type="checkbox" id="sunset"> In the evening at sunset</label> </div>
         <div id="whenSunrise"><label><input type="checkbox" id="sunrise"> In the morning at sunrise</label> </div>
         <div id="whenCustom"><label><input type="checkbox" id="custom"> At <input type="time" id="customWhen"></label> </div>
