@@ -17,7 +17,7 @@ function addSunTimes(profile, answers) {
     answers.push('Sorry. I don\'t know where you are, so can\'t tell you when sunset is.');
     return;
   }
-  var readableFormat = 'MMMM D at HH:mm';
+  var readableFormat = 'MMMM D [at] HH:mm';
 
   var zoneName = profile.tzInfo.zoneName;
   var nowTz = moment.tz(zoneName);
