@@ -1,6 +1,7 @@
 var express = require('express');
-
 var router = express.Router();
+var verses = require('../verses');
+const notifications = require('../notifications');
 
 /* GET home page. */
 router.get('/', function (req, res) {
@@ -16,13 +17,12 @@ router.get('/listing', function (req, res) {
 });
 
 router.get('/notify', function (req, res) {
-  res.render('notify');
+  res.render('notify', notifications);
 });
 
-var v = require('../verses');
 
 router.get('/verse', function (req, res) {
-  res.render('verse', v);
+  res.render('verse', verses);
 });
 
 

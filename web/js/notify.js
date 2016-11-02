@@ -1,24 +1,22 @@
 var Notify = function () {
     var settings = {
-        locationLat: null,
-        locationLong: null,
-        userId: null
+        locationLat: localStorage.lat,
+        locationlng: localStorage.lng,
+        userId: null,
+        tags: null
     };
 
     function prepare() {
-        // OneSignal.isPushNotificationsEnabled(function (isEnabled) {
-        //     // showStep(2, isEnabled);
-        //     // if (isEnabled)
-        //     //     console.log("Push notifications are enabled!");
-        //     // else
-        //     //     console.log("Push notifications are not enabled yet.");
-        // });
-
         OneSignal.push(function () {
-            /* These examples are all valid */
-            OneSignal.getUserId(function (userId) {
-                showStep(2, userId != null);
+            OneSignal.getTags(function (tags) {
+                settings.tags = tags;
+                console.log('got tags');
+                console.log(tags);
+                applyWhen(tags);
+            });
+            OneSignal.getUserId(function (userId, a, b) {
                 settings.userId = userId;
+                showStep(2, userId != null);
                 console.log(userId); // leave in console, for help desk support
             });
         });
@@ -35,20 +33,57 @@ var Notify = function () {
 
 
 
-        $('#btnGetLocation').click(btnGetLocation);
+        $('#btnGetLocation, #btnGetLocation2').click(btnGetLocation);
         $('#btnEnableNotification').click(btnEnableNotification);
         $('.testNow').click(btnTestNow);
         $('.when').on('change', 'input[type=checkbox]', setWhen)
-        $('.when').on('change', 'input[type=time]', function(ev){
-            $(ev.target).closest('li').find('input[type=checkbox]').trigger('change');
+        $('.when').on('change', 'input[type=time]', function (ev) {
+            var cb = $(ev.target).closest('div').find('input[type=checkbox]');
+            if (cb.prop('checked')) {
+                cb.trigger('change');
+            }
         })
 
         if (localStorage.locationName) {
-            showLocationName(localStorage.locationName);
+            showLocationInfo(localStorage.locationName);
         } else {
             showStep(1, false);
         }
     }
+
+    function showTime() {
+        $('.time').text('');
+
+        if (!settings.locationLat || !settings.locationlng) {
+            return;
+        }
+
+        callAjax('/getTime', {
+            lat: settings.locationLat,
+            lng: settings.locationlng,
+            //tz: new Date().getTimezoneOffset()
+            zoneName: moment.tz.guess()
+        }, function (info) {
+            $('.time').html(info.success.join('<br>'))
+        })
+    }
+
+    function applyWhen(tags) {
+        var when = tags.when;
+        $('input#sunset').prop('checked', when.search('sunset') !== -1);
+        $('input#sunrise').prop('checked', when.search('sunrise') !== -1);
+        $('input#custom').prop('checked', when.search(':') !== -1);
+        var parts = when.split(',');
+        for (var i = 0; i < parts.length; i++) {
+            var part = parts[i];
+            if (part.search(':') !== -1) {
+                $('input#customWhen').val(part);
+                //only one for now
+                break;
+            }
+        }
+    }
+
 
     function setWhen(ev) {
         if (!settings.userId) {
@@ -56,19 +91,34 @@ var Notify = function () {
             return;
         }
         $('.whenResult').hide();
-        var input = $(ev.target);
-        var li = input.closest('li');
-        var what = li.attr('id');
+        // var when = $('#when').serialize();
+        var parts = [];
+        if ($('input#sunset').prop('checked')) {
+            parts.push('sunset');
+        }
+        if ($('input#sunrise').prop('checked')) {
+            parts.push('sunrise');
+        }
+
+        if ($('input#custom').prop('checked')) {
+            var time = $('input#customWhen').val();
+            if (time) {
+                parts.push(time);
+            }
+        }
+        var when = parts.join(',');
         callAjax('/setWhen', {
             user: settings.userId,
-            what: what,
-            checked: input.prop('checked'),
-            when: what === 'whenCustom' ? li.find('input[type=time]').val() : null
+            when: when
         },
             function (info) {
-                console.log(info);
-                $('.whenResult_true').toggle(info.success);
-                $('.whenResult_false').toggle(!info.success);
+                if (info.saved) {
+                    // save it locally... if okay, send as Tag for permanent storage
+                    console.log('send when: ' + info.when);
+                    OneSignal.sendTag("when", info.when);
+                }
+                $('.whenResult_true').toggle(info.saved);
+                $('.whenResult_false').toggle(!info.saved);
             });
 
     }
@@ -79,8 +129,7 @@ var Notify = function () {
             return;
         }
         var btn = $(ev.target);
-        var what = btn.closest('li').attr('id');
-        callAjax('/test', { user: settings.userId, what: what }, function (info) {
+        callAjax('/test', { user: settings.userId }, function (info) {
             console.log(info);
         });
     }
@@ -109,7 +158,9 @@ var Notify = function () {
         try {
             navigator.geolocation.getCurrentPosition(function (loc) {
                 localStorage.lat = settings.locationLat = loc.coords.latitude;
-                localStorage.long = settings.locationLong = loc.coords.longitude;
+                localStorage.lng = settings.locationlng = loc.coords.longitude;
+                OneSignal.sendTag("latitude", settings.locationLat);
+                OneSignal.sendTag("longitude", settings.locationlng);
                 getLocationName();
             })
         } catch (e) {
@@ -117,14 +168,16 @@ var Notify = function () {
         }
     }
 
-    function showLocationName(name) {
+    function showLocationInfo(name) {
         localStorage.locationName = name;
         $('.locationEcho').text(name);
         showStep(1, true);
+        console.log('showed location name');
+        showTime();
     }
 
     function getLocationName() {
-        var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + settings.locationLat + ',' + settings.locationLong
+        var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + settings.locationLat + ',' + settings.locationlng
         $.ajax({
             url: url,
             dataType: 'json',
@@ -136,7 +189,10 @@ var Notify = function () {
                         var component = components[i];
                         //console.log(component);
                         if ($.inArray('political', component.types) != -1) { //$.inArray('political', component.types)!=-1 && 
-                            showLocationName(component.short_name);
+                            var location = component.short_name;
+                            OneSignal.sendTag("location", location);
+                            OneSignal.sendTag("zoneName", moment.tz.guess());
+                            showLocationInfo(location);
                             break;
                         }
                     }
@@ -153,9 +209,12 @@ var Notify = function () {
     }
 
     function showStep(num, show) {
-        $(`#step${num}_`).hide();
-        $(`#step${num}_false`).toggle(!show);
-        $(`#step${num}_true`).toggle(show);
+        $(`.step${num}_`).hide();
+        $(`.step${num}_false`).toggle(!show);
+        $(`.step${num}_true`).toggle(show);
+        if (num !== 3) {
+            showStep(3, settings.userId != null && localStorage.locationName);
+        }
     }
 
     return {

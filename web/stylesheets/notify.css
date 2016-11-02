@@ -16,3 +16,6 @@ ul.when {
 .whenResult {
   display: none;
 }
+#btnGetLocation2 {
+  font-size: .6em;
+}

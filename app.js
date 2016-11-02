@@ -14,7 +14,7 @@ var favicon = require('serve-favicon')
 var app = express();
 
 
-//-------
+//-------------------------------------------
 
 const fs = require('fs');
 const glob = require('glob');
@@ -953,7 +953,12 @@ app.post('/test', function (req, res) {
 })
 
 app.post('/setWhen', function (req, res) {
-  var success = notifications.setWhen(req.body);
+  var result = notifications.setWhen(req.body);
+  res.send(result);
+})
+
+app.post('/getTime', function (req, res) {
+  var success = notifications.getTime(req.body);
   res.send({
     success: success
   });

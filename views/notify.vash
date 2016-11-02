@@ -4,24 +4,24 @@
 <h2>Setup Notifications</h2>
 
 <div class="supported">
-    <p id="step1_">&#10144; Checking location status...</p>
-    <p class="step1" id="step1_false">&#10144; Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
-    <p class="step1" id="step1_true">&#10004; Your location is reported as "<span class="locationEcho"></span>".</p>
+    <p class="step1_">&#10144; Checking location status...</p>
+    <p class="step1 step1_false">&#10144; Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
+    <p class="step1 step1_true">&#10004; Your location is reported as "<span class="locationEcho"></span>". <button type="button" id="btnGetLocation2">Refresh</button></p>
+    <blockquote class="time step1 step1_true"></blockquote>
 
-    <p id="step2_">&#10144; Checking notification status...</p>
-    <p class="step2" id="step2_false">&#10144; Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
-    <p class="step2" id="step2_true">&#10004; You have enabled notifications on this device.</p>
+    <p class="step2_">&#10144; Checking notification status...</p>
+    <p class="step2 step2_false">&#10144; Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
+    <p class="step2 step2_true">&#10004; You have enabled notifications on this device.</p>
+    <blockquote class="step2 step2_true"><button class="testNow">Test Now!</button></blockquote>
 
-    <p>&#10144;<button class="testNow">Test Now!</button></p>
-
-    <p>&#10144; When do you want to be notified?</p>
-    <ul class="when">
-        <li id="whenSunset"><label><input type="checkbox"> In the evening at sunset</label> </li>
-        <li id="whenSunrise"><label><input type="checkbox"> In the morning at sunrise</label> </li>
-        <li id="whenCustom"><label><input type="checkbox"> At <input type="time"></label> </li>
-        <li class="whenResult whenResult_true">Saved!</li>
-        <li class="whenResult whenResult_false">Not saved</li>
-    </ul>
+    <p class="step3 step3_true">&#10004; When do you want to be notified?</p>
+    <blockquote class="step3_true">
+        <div id="whenSunset"><label><input type="checkbox" id="sunset"> In the evening at sunset</label> </div>
+        <div id="whenSunrise"><label><input type="checkbox" id="sunrise"> In the morning at sunrise</label> </div>
+        <div id="whenCustom"><label><input type="checkbox" id="custom"> At <input type="time" id="customWhen"></label> </div>
+        <div class="whenResult whenResult_true">Saved!</div>
+        <div class="whenResult whenResult_false">Not saved</div>
+    </blockquote>
 </div>
 <div class="notSupported">
     <p>Sorry, this web browser does not support notifications!</p>
@@ -32,6 +32,8 @@
 
 @html.block('scripts', function (model){
   <script src="js/notify.js"></script>
+  <script src="js/moment.js"></script>
+  <script src="js/moment-timezone-with-data.js"></script>
 });
 
 @html.block('head', function(model){

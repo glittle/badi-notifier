@@ -17,6 +17,7 @@
   "homepage": "https://github.com/glittle/badi-notifier",
   "dependencies": {
     "body-parser": "^1.9.3",
+    "csv-parse": "^1.1.7",
     "errorhandler": "~1.2.2",
     "express": "4.13.4",
     "express-session": "~1.9.1",
@@ -29,7 +30,7 @@
     "multer": "~0.1.6",
     "node-persist": "0.0.11",
     "node.extend": "^1.1.5",
-    "request": "^2.71.0",
+    "request": "^2.76.0",
     "serve-favicon": "~2.1.6",
     "timezonedb-node": "^1.0.7",
     "vash": "^0.12.2"

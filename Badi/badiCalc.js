@@ -11,12 +11,13 @@ const sunCalcReady = false;
 fillDatePresets();
 
 function addSunTimes(profile, answers) {
+  console.log(profile);
   var coord = profile.coord;
   if (!coord) {
     answers.push('Sorry. I don\'t know where you are, so can\'t tell you when sunset is.');
     return;
   }
-  var readableFormat = 'MMM D, HH:mm';
+  var readableFormat = 'MMMM D at HH:mm';
 
   var zoneName = profile.tzInfo.zoneName;
   var nowTz = moment.tz(zoneName);
@@ -29,7 +30,7 @@ function addSunTimes(profile, answers) {
 
   if (nowTz.isAfter(sunset1Tz)) {
     // eve of day1 into day2
-    answers.push(`Starting Sunset: ${sunset1Tz.format(readableFormat)}`);
+    answers.push(`Day started at sunset: ${sunset1Tz.format(readableFormat)}`);
 
     var sun2 = sunCalc.getTimes(tomorrowNoonTz, coord.lat, coord.lng);
     var sunrise2Tz = moment.tz(sun2.sunrise, zoneName)
@@ -42,13 +43,13 @@ function addSunTimes(profile, answers) {
       answers.push(`Sunrise: ${sunrise2Tz.format(readableFormat)}`);
       answers.push(`Now: ${nowTz.format(readableFormat)}`);
     }
-    answers.push(`Ending Sunset: ${sunset2Tz.format(readableFormat)}`);
+    answers.push(`Day will end at sunset: ${sunset2Tz.format(readableFormat)}`);
   } else {
     // get prior sunset
     var sun0 = sunCalc.getTimes(moment(noonTz).subtract(24, 'hours'), coord.lat, coord.lng);
     var sunset0 = moment.tz(sun0.sunset, zoneName)
 
-    answers.push(`Starting Sunset: ${sunset0.format(readableFormat)}`);
+    answers.push(`Day started at sunset: ${sunset0.format(readableFormat)}`);
     if (nowTz.isBefore(sunrise1Tz)) {
       answers.push(`Now: ${nowTz.format(readableFormat)}`);
       answers.push(`Sunrise: ${sunrise1Tz.format(readableFormat)}`);
@@ -56,7 +57,7 @@ function addSunTimes(profile, answers) {
       answers.push(`Sunrise: ${sunrise1Tz.format(readableFormat)}`);
       answers.push(`Now: ${nowTz.format(readableFormat)}`);
     }
-    answers.push(`Ending Sunset: ${sunset1Tz.format(readableFormat)}`);
+    answers.push(`Day will end at sunset: ${sunset1Tz.format(readableFormat)}`);
   }
 }
 
