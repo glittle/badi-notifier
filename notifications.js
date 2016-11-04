@@ -3,11 +3,17 @@ var https = require('https');
 var request = require('request');
 var parse = require('csv-parse');
 var zlib = require('zlib');
+const moment = require('moment-timezone');
+
 const badiCalc = require('./Badi/badiCalc');
 const sunCalc = require('./Badi/sunCalc');
 
 var _rawUserList = [];
 var _users = {}; //keyed by id
+var _triggers = {}; //keyed by HH:mm
+
+var manuallyStopped = false;
+var reminderInterval = null;
 
 function sendTest(user, msg) {
 
@@ -60,7 +66,7 @@ function setWhen(body) {
         user.tags.when = body.when;
     }
 
-    setupScheduleForUser(user);
+    addAllReminderTriggersForUser(user.id);
 
     return {
         saved: true,
@@ -101,10 +107,6 @@ function setWhen(body) {
     // return false;
 }
 
-function setupScheduleForUser(user) {
-    console.log('setup for...');
-    console.log(user);
-}
 
 function sendNotification(data) {
     var headers = {
@@ -140,7 +142,281 @@ function sendNotification(data) {
     req.end();
 };
 
-function addKnownUsers() {
+
+
+
+
+
+// For this user, add any reminders in the next 24 hours
+function addAllReminderTriggersForUser(id) {
+    //TODO
+    var profile = _users[id];
+    console.log('add all triggers for user ' + id);
+    console.log(profile);
+
+    var zoneName = profile.tags.zoneName;
+
+    // needs to be at least one minute in the future!
+    var nowTz = moment.tz(zoneName).add(1, 'minutes');
+    var noonTz = moment(nowTz).hour(12).minute(0).second(0);
+    var tomorrowNoonTz = moment(noonTz).add(24, 'hours');
+
+    var serverNow = moment().add(1, 'minutes');
+    var minutesFromUserToServer = serverNow.diff(nowTz, 'minutes');
+
+    // save for later
+    profile.minutesOffset = minutesFromUserToServer;
+
+    var numAdded = 0;
+    var triggers = (profile.tags.when || '').split(',');
+    for (var i = 0; i < triggers.length; i++) {
+        var trigger = triggers[i];
+        if (!trigger) {
+            continue;
+        }
+        var when;
+        console.log('processing ' + trigger);
+        switch (trigger) {
+            case 'sunrise':
+            case 'sunset':
+                when = determineSunTriggerTime(trigger, nowTz, noonTz, tomorrowNoonTz, profile);
+                if (!when) {
+                    console.log(`invalid trigger: ${trigger} for ${id}`);
+                    continue;
+                }
+                break;
+            default:
+                // should be hh:mm
+                var userTime = moment(trigger, 'H:mm');
+
+                if (userTime.isValid()) {
+                    when = userTime.subtract(minutesFromUserToServer, 'minutes').format('HH:mm');
+                } else {
+                    console.log(`invalid time: ${trigger} for ${id}`);
+                    continue;
+                }
+                break;
+        }
+        var triggersAtThisTime = _triggers[when];
+        if (!triggersAtThisTime) {
+            _triggers[when] = triggersAtThisTime = [];
+        }
+        triggersAtThisTime.push({ id: id, trigger: trigger });
+    }
+}
+function determineSunTriggerTime(triggerName, nowTz, noonTz, tomorrowNoonTz, profile) {
+    var zoneName = profile.tags.zoneName;
+    var lat = +profile.tags.latitude;
+    var lng = +profile.tags.longitude;
+
+    var sunTimes = sunCalc.getTimes(noonTz, lat, lng);
+    var whenTz = moment.tz(sunTimes[triggerName], zoneName)
+
+    if (nowTz.isAfter(whenTz, 'minute')) {
+        sunTimes = sunCalc.getTimes(tomorrowNoonTz, lat, lng)
+        whenTz = moment.tz(sunTimes[triggerName], zoneName);
+    }
+
+    var serverWhen = moment(whenTz).subtract(profile.minutesOffset, 'minutes');
+    var serverWhenHHMM = serverWhen.format('HH:mm');
+
+    profile[triggerName] = serverWhenHHMM;
+
+    return serverWhenHHMM;
+}
+
+function OLD_determineSunTriggerTime(which, nowTz, noonTz, tomorrowNoonTz, idToProcess, profile) {
+    var remindersForThisEvent = _triggers[which];
+    var numChanged = 0;
+
+    for (var id in remindersForThisEvent) {
+        if (idToProcess === id) {
+            var profileStub = remindersForThisEvent[id];
+            //        console.log(profileStub);
+            //TODO update to use moment.tz!
+
+            var lastSetFor = profileStub.lastSetFor;
+            if (lastSetFor) {
+                // remove old version
+                var reminderGroup = _triggers[lastSetFor];
+                //          console.log(reminderGroup[id]);
+                if (reminderGroup[id] && reminderGroup[id].sunTrigger === which) {
+                    delete reminderGroup[id];
+                    console.log(`removed previous ${which} reminder.`)
+                    numChanged++;
+                }
+            }
+
+            var zoneName = profile.tags.zoneName;
+            var lat = +profile.tags.latitude;
+            var lng = +profile.tags.longitude;
+
+            var sunTimes = sunCalc.getTimes(noonTz, lat, lng);
+            var whenTz = moment.tz(sunTimes[which], zoneName)
+
+            if (nowTz.isAfter(whenTz, 'minute')) {
+                sunTimes = sunCalc.getTimes(tomorrowNoonTz, lat, lng)
+                whenTz = moment.tz(sunTimes[which], zoneName);
+            }
+
+            var details = {
+                diff: profileStub.diff,
+                userTime: whenTz.format('HH:mm'),
+                sunTrigger: which
+            };
+
+            var serverWhen = moment(whenTz).subtract(profileStub.diff, 'hour');
+            var serverWhenHHMM = serverWhen.format('HH:mm');
+            console.log(`added ${which} for ${serverWhenHHMM}`);
+
+            profileStub.lastSetFor = serverWhenHHMM;
+            profileStub.lastSetAt = moment().format(); // just for interest sake
+
+            //      console.log(profileStub);
+            //      console.log(details);
+
+            var reminderGroup = _triggers[serverWhenHHMM] || {};
+            reminderGroup[id] = details;
+            _triggers[serverWhenHHMM] = reminderGroup;
+            numChanged++;
+        }
+    }
+    return numChanged;
+}
+
+function doReminders() {
+
+    var serverWhen = moment().format('HH:mm');
+    console.log(`Checking reminders for ${serverWhen} (server time)`)
+
+    var remindersAtWhen = _triggers[serverWhen];
+    if (remindersAtWhen) {
+        for (var id in remindersAtWhen) {
+            if (remindersAtWhen.hasOwnProperty(id)) {
+                console.log('sending to ' + id);
+                var info = remindersAtWhen[id];
+
+                sendReminder(serverWhen, id, info);
+
+                if (info.sunTrigger) {
+
+                    delete remindersAtWhen[id];
+                    saveNeeded = true;
+
+                    setTimeout(function (idToProcess) {
+                        processSuntimes(idToProcess);
+                    }, 4 * 60 * 1000, id); // four minutes... sunset may move by a few minutes between days...
+                }
+            }
+        }
+    }
+}
+
+function processReminders(currentId, answers, deleteReminders) {
+    var num = 0;
+
+    // reminders are shared... storage is not multi-user, so use it for very short times!
+    var reminders = storage.getItem('reminders') || {};
+    var saveNeeded = false;
+
+    for (var when in reminders) {
+        if (reminders.hasOwnProperty(when)) {
+            var remindersAtWhen = reminders[when];
+            for (var id in remindersAtWhen) {
+                if (id === currentId) {
+                    var info = remindersAtWhen[id];
+
+
+                    if (deleteReminders) {
+
+                        //TODO find reminder at actual time!
+
+                        delete remindersAtWhen[id];
+                        saveNeeded = true;
+                        answers.push(`Removed reminder at ${info.userTime || when}.`);
+                    } else {
+                        if (info.sunTrigger) {
+                            answers.push(`The next ${info.sunTrigger} reminder will be at ${info.userTime}.`);
+                        } else {
+                            answers.push(`➢ Remind at ${info.userTime || when}`);
+                        }
+                    }
+                    num++;
+                }
+            }
+            if (Object.keys(remindersAtWhen).length === 0) {
+                delete reminders[when];
+                saveNeeded = true;
+            }
+        }
+    }
+    if (saveNeeded) {
+        storage.setItem('reminders', reminders);
+    }
+    return num;
+}
+
+function sendReminder(serverWhen, id) {
+    //DONE
+    console.log(`Sending ${serverWhen} to ${id}`);
+
+    var profile = _users(id);
+
+    var dateInfo = badiCalc.getDateMessage(profile);
+    var message = {
+        app_id: appId,
+        headers: {
+            "en": dateInfo.title
+        },
+        contents: {
+            "en": dateInfo.text
+        },
+        url: 'https://wondrous-badi.herokuapp.com/verse',
+        include_player_ids: [user]
+    };
+    sendNotification(message);
+
+    // var log = [];
+    // log.push({
+    //     when: new Date(),
+    //     trigger: trigger,
+    //     answers: originalAnswers
+    // });
+
+    // profile.visitCount = log.length;
+    // storage.setItem(keys.profile, profile);
+    // storage.setItem(keys.log, log);
+
+    // console.log('stored profile and log');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function retrieveKnownUsers() {
     var headers = {
         "Content-Type": "application/json; charset=utf-8",
         "Authorization": "Basic NjBiYWE4ZWMtMjIzMi00ODk0LTk4YzItMWNmOGMzYWU3NTM0"
@@ -164,12 +440,12 @@ function addKnownUsers() {
             var result = JSON.parse(data);
             var fileUrl = result.csv_file_url;
             if (fileUrl) {
-                // never ready instantly... give some time for the file to be prepared
+                // file is never ready instantly... give some time for the file to be prepared
                 setTimeout(function () {
                     loadRemoteCsvFile(fileUrl);
                 }, 1000);
             } else {
-                console.log('Getting info re CSV file:');
+                console.log('Error getting info re CSV file:');
                 console.log(data);
             }
         });
@@ -186,6 +462,8 @@ function addKnownUsers() {
 var _remoteCsvLoadAttempts = 0;
 
 function loadRemoteCsvFile(url) {
+    const maxAttempts = 60;
+
     _remoteCsvLoadAttempts++;
     console.log(`Loading remote CSV, attempt ${_remoteCsvLoadAttempts}...`);
 
@@ -196,7 +474,7 @@ function loadRemoteCsvFile(url) {
         gzip: true
     }, function (error, response, body) {
         if (response.statusCode == 403) {
-            if (_remoteCsvLoadAttempts < 60) {
+            if (_remoteCsvLoadAttempts < maxAttempts) {
                 setTimeout(function () {
                     loadRemoteCsvFile(url);
                 }, 1000);
@@ -236,13 +514,15 @@ function processCsv(csvFile) {
 
 function setupSchedulesForAllUsers() {
     var withTags = 0;
+    // extract only those with tags
     for (var i = 0, m = _rawUserList.length; i < m; i++) {
         var user = _rawUserList[i];
         if (user.tags) {
             _users[user.id] = {
                 id: user.id,
                 tags: convertTags(user.tags),
-                language: user.language
+                language: user.language,
+                minutesOffset: 0  // will be updated later
             };
             withTags++;
         }
@@ -251,30 +531,47 @@ function setupSchedulesForAllUsers() {
     for (var id in _users) {
         if (_users.hasOwnProperty(id)) {
             var user = _users[id];
-            setupScheduleForUser(_users[id]);
+            addAllReminderTriggersForUser(id);
         }
     }
+    console.log('Triggers loaded:')
+    console.log(_triggers);
 }
 
 function convertTags(rawTagString) {
     return JSON.parse(`{${rawTagString.replace(/=>/g, ':')}}`);
 }
 
-function getWhenFor(id){
+function getWhenFor(id) {
     var user = _users[id];
-    if(user){
+    if (user) {
         var when = user.tags.when;
         return when;
     }
     return null;
 }
 
+function prepareReminderTimer() {
 
-addKnownUsers()
+    if (manuallyStopped) {
+        return;
+    }
+
+    clearInterval(reminderInterval);
+    reminderInterval = setInterval(doReminders, 1000 * 60);
+
+    console.log(`Reminder interval started for every minute.`);
+
+    doReminders();
+}
 
 module.exports = {
     sendTest: sendTest,
     setWhen: setWhen,
     getTime: getTime,
     getWhenFor: getWhenFor
-}
+};
+
+retrieveKnownUsers();
+prepareReminderTimer();
+

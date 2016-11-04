@@ -8,8 +8,10 @@
   padding: 0;
   vertical-align: middle;
 }
-p.Beta {
-  margin-bottom: 25px;
+span.tip {
+  font-size: 80%;
+  margin-left: 3em;
+  font-style: italic;
 }
 .Clear {
   clear: left;
@@ -61,11 +63,13 @@ table#List {
   padding-bottom: 1px;
   width: 100%;
   border-collapse: collapse;
-  border-radius: 3px;
+  border-radius: 10px;
 }
 #List td,
 #List th {
   padding: 0 10px 0 10px;
+}
+#List td {
   white-space: nowrap;
 }
 #List th.Gregorian {

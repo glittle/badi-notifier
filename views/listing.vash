@@ -2,11 +2,8 @@
 @html.block('content', function(model){
         
 <h3>Feasts &amp; Holy Days</h3>
-<p>
-    The Baha'i calendar has a number of special days each year.
-The list of dates below shows the name of each day or month,
-and when it starts.
-</p>
+<p>The Baha'i Faith has a number of special days each year, scheduled using the Wondrous (Badí') Calendar.</p>
+
 <div id="CalHead"></div>
 <div class="List"></div>
 

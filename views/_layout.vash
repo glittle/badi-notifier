@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="manifest" href="manifest.json">
-    <title>Wondrous Calendar</title>
+    <title>Wondrous</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -15,8 +15,8 @@
 
 <body>
     <section class="page-header">
-        <h1 class="project-name">The Wondrous Calendar</h1>
-        <h2 class="project-tagline">CAUTION: This site is under development as of November 2016...</h2>
+        <h1 class="project-name">The Wondrous (Badí') Calendar</h1>
+        <!--<h2 class="project-tagline">CAUTION: This site is under development as of November 2016...</h2>-->
     </section>
 
     <section class="main-content">
@@ -27,14 +27,15 @@
     </section>
 
     <section class="page-header">
-        <a href="listing" class="btn">Feasts &amp; Holy Days</a>
+        <!--<a href="listing" class="btn">Feasts &amp; Holy Days</a>-->
         <a href="notify" class="btn">Daily Notifications</a>
         <a href="verse" class="btn">Daily Verse</a>
 
         <footer class="site-footer">
             @html.block('footer')
 
-            <span class="site-footer-owner"><a href="https://https://wondrous-badi.herokuapp.com/">The Wondrous Calendar Site</a> is created and maintained by <a href="https://github.com/glittle">Glen Little</a>.</span>
+            <span class="site-footer-owner"><a href="https://https://wondrous-badi.herokuapp.com/">The Wondrous Calendar Site</a> is 
+            created and maintained by <a href="https://github.com/glittle">Glen Little</a>.</span>
         </footer>
 
     </section>

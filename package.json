@@ -33,6 +33,7 @@
     "request": "^2.76.0",
     "serve-favicon": "~2.1.6",
     "timezonedb-node": "^1.0.7",
+    "unzip-response": "^2.0.1",
     "vash": "^0.12.2"
   },
   "scripts": {

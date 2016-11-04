@@ -1,9 +1,13 @@
 @html.extend('_layout', function(model){ 
 @html.block('content', function(model){
 
-<h2>Setup Notifications</h2>
-
 <div class="supported">
+    <h2>Notifications</h2>
+    <p>The computer or device you are using at the moment can receive notifications from this web
+        site, telling you the current day is in the Wondrous (Badí') Calendar. Follow the steps
+        below to turn it on!</p>
+
+    <h2>Setup</h2>
     <p class="step1_">&#10144; Checking location status...</p>
     <p class="step1 step1_false">&#10144; Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
     <p class="step1 step1_true">&#10004; Your location is reported as "<span class="locationEcho"></span>". <button type="button" id="btnGetLocation2">Refresh</button></p>
@@ -16,9 +20,9 @@
 
     <p class="step3 step3_true">&#10004; When do you want to be notified?</p>
     <blockquote class="step3 step3_true">
-        <div id="whenSunset"><label><input type="checkbox" id="sunset"> In the evening at sunset</label> </div>
-        <div id="whenSunrise"><label><input type="checkbox" id="sunrise"> In the morning at sunrise</label> </div>
-        <div id="whenCustom"><label><input type="checkbox" id="custom"> At <input type="time" id="customWhen"></label> </div>
+        <div id="whenSunset"><label><input type="checkbox" id="sunset"> Every evening at sunset</label> </div>
+        <div id="whenSunrise"><label><input type="checkbox" id="sunrise"> Every morning at sunrise</label> </div>
+        <div id="whenCustom"><label><input type="checkbox" id="custom"> Every day at <input type="time" id="customWhen"></label> </div>
         <div class="whenResult whenResult_true">Saved!</div>
         <div class="whenResult whenResult_false">Not saved</div>
     </blockquote>

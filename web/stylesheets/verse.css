@@ -1,5 +1,5 @@
 .verse {
-  font-size: 1.5em;
+  font-size: 1.2em;
   border: double 4px lightseagreen;
   padding: 1em;
 }
@@ -7,4 +7,7 @@
   font-size: .85em;
   white-space: nowrap;
   font-style: italic;
+}
+.prefix {
+  text-align: center;
 }

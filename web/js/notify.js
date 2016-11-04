@@ -64,8 +64,13 @@ var Notify = function () {
             lng: settings.locationlng,
             //tz: new Date().getTimezoneOffset()
             zoneName: moment.tz.guess()
-        }, function (info) {
-            $('.time').html(info.success.join('<br>'))
+        }, function (times) {
+            var html = [];
+            for (var i = 0; i < times.length; i++) {
+                var time = times[i];
+                html.push(`<div><strong>${time.t}</strong> <span>${time.v}</span></div>`);
+            }
+            $('.time').html(html.join(''));
         })
     }
 
@@ -211,7 +216,6 @@ var Notify = function () {
     }
 
     function showStep(num, show) {
-        debugger;
         $(`.step${num}_`).hide();
         $(`.step${num}_false`).toggle(!show);
         $(`.step${num}_true`).toggle(show);

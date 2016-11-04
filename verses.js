@@ -37,12 +37,10 @@ function getVerse() {
         var verseInfo = dayVerses[isAm ? 'am' : 'pm'];
         if (verseInfo) {
             var v = {
-                prefix: `Our verse ${timeOfDay} (${key}):`,
-                suffix: ` (Bahá'u'lláh, ${verseInfo.r})`,
+                prefix: `A selection from "Reciting the Verses of God" ${timeOfDay}:`,
+                suffix: `(Bahá'u'lláh, ${verseInfo.r})`,
                 verse: verseInfo.q
             };
-            console.log('ehho')
-            console.log(v);
             return v;
         }
     }

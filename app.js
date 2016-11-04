@@ -958,10 +958,8 @@ app.post('/setWhen', function (req, res) {
 })
 
 app.post('/getTime', function (req, res) {
-  var success = notifications.getTime(req.body);
-  res.send({
-    success: success
-  });
+  var times = notifications.getTime(req.body);
+  res.send(times);
 })
 
 app.use('/', routes);

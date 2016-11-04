@@ -34,61 +34,59 @@ var HolyDays = function () {
 
   function FillHead() {
     var timeZoneName;
-    try{
+    try {
       timeZoneName = new Date().toString().match(/\((.*)\)/)[1];
-    }catch(e){}
+    } catch (e) { }
     var html =
-    '<p>The dates shown below are correct based on the changes introduced in 171 B.E. by the Universal House of Justice and are defined until ' + _lastYearDefined + ' B.E.</p>'
-  + '<p class=Beta>Please notify <a href="mailto:glen.little@gmail.com">Glen Little</a> of any problems or suggestions! Hover over each <span class=help title="This is a tip!"></span> for more information...</p>'
-  + '<div class="SelectorArea">'
-    + '<div class="Selectors">'
-    + '<div class="YearSelect">Year: <select accesskey=Y id="DesiredYear"></select></div>'
+      '<div class="SelectorArea">'
+      + '<div class="Selectors">'
+      + '<div class="YearSelect">Year: <select accesskey=Y id="DesiredYear"></select></div>'
       + '<div id=yearComment1 class="Hidden YearComment">* Naw Rúz in year <span class=bYear></span> falls on March ' + (19 + '/').eveInfo() + '20.</div>'
       + '<div id=yearComment2 class="Hidden YearComment">** Naw Rúz in year <span class=bYear></span> falls on March ' + (18 + '/').eveInfo() + '19.</div>'
-    + '<div></div>'
-    + '<span class="HolyDayHS"><input id="WantHolyDay" type="checkbox" accesskey="H" /><label for="WantHolyDay"> Holy Days</label></span>'
-    + '<span class="Feast"><input id="WantFeast" type="checkbox" accesskey="M" /><label for="WantFeast"> Months/Feasts</label></span>'
-    + '<span class="OtherDay"><input id="WantOther" type="checkbox" accesskey="O" /><label for="WantOther"> Other Events</label></span>'
-    + '<span class="Fast"><input id="WantFast" type="checkbox" accesskey="F" /><label for="WantFast"> Fast Days</label></span>'
-  + '</div>'
-  + '</div>'
-    + '<div class=SelectorOptions>'
-    + '<span><input id="ShowToday" type="checkbox" accesskey="T" /><label for="ShowToday"><i> Show Today</i></label> <span class="help" title="Only shows in the current year."></span></span>'
-    + '<span><input id="ShowEve" type="checkbox" accesskey="E" /><label for="ShowEve"><i> Show Eve Dates</i></label> <span class="help" title="Days in the Bahá’í calendar start at sunset on the eve (before) the main part of the day."></span></span>'
-    + '<span class=LatLong><input id="ShowSunset" type="checkbox" accesskey="U" /><label for="ShowSunset"><i> Show Local Sunset Times</i></label>'
-       + '<div class=Sunset><i>This computer is currently in the ' + timeZoneName + '.</i> <span class="help" title="Tip: You computer\'s clock is used to determine daylight savings start and end times throughout the year."></span></div>'
-       + '<div class="Hidden Sunset">Lat: <input id=lat> Long: <input id=long>'
-         + '<button type=button id=getLocation>Learn for my location</button> <span class="help" title="Tip: if clicking the button fails, you could find your location in Google Maps, then\ncopy the Latitude and Longitude numbers from the URL address after the @."></span></div>'
-       + '<span title="Nearest location" class=Sunset id=latLongName></span>'
-       + '</span>'
-    + '<span id=printBtnArea><button type=button onclick="print()">Print</button></span>'
-    + '<div class=Clear></div>'
-  + '</div>'
-    + '<div class=Clear></div>';
+      + '<div></div>'
+      + '<span class="HolyDayHS"><input id="WantHolyDay" type="checkbox" accesskey="H" /><label for="WantHolyDay"> Holy Days</label></span>'
+      + '<span class="Feast"><input id="WantFeast" type="checkbox" accesskey="M" /><label for="WantFeast"> Months/Feasts</label></span>'
+      + '<span class="OtherDay"><input id="WantOther" type="checkbox" accesskey="O" /><label for="WantOther"> Other Events</label></span>'
+      + '<span class="Fast"><input id="WantFast" type="checkbox" accesskey="F" /><label for="WantFast"> Fast Days</label></span>'
+      + '</div>'
+      + '</div>'
+      + '<div class=SelectorOptions>'
+      + '<span><input id="ShowToday" type="checkbox" accesskey="T" /><label for="ShowToday"><i> Show Today</i></label> <span class="help" title="Only shows in the current year."></span> <span class="tip">Hover over each <span class="help" title="This is a tip!"></span> for useful information!</span> </span>'
+      + '<span><input id="ShowEve" type="checkbox" accesskey="E" /><label for="ShowEve"><i> Show Eve Dates</i></label> <span class="help" title="Days in the Wondrous calendar start at sunset on the eve (before) the main part of the day."></span></span>'
+      + '<span class=LatLong><input id="ShowSunset" type="checkbox" accesskey="U" /><label for="ShowSunset"><i> Show Local Sunset Times</i></label>'
+      + '<div class=Sunset><i>This computer is currently in the ' + timeZoneName + '.</i> <span class="help" title="Tip: You computer\'s clock is used to determine daylight savings start and end times throughout the year."></span></div>'
+      + '<div class="Hidden Sunset">Lat: <input id=lat> Long: <input id=long>'
+      + '<button type=button id=getLocation>Learn for my location</button> <span class="help" title="Tip: if clicking the button fails, you could find your location in Google Maps, then\ncopy the Latitude and Longitude numbers from the URL address after the @."></span></div>'
+      + '<span title="Nearest location" class=Sunset id=latLongName></span>'
+      + '</span>'
+      + '<span id=printBtnArea><button type=button onclick="print()">Print</button></span>'
+      + '<div class=Clear></div>'
+      + '</div>'
+      + '<div class=Clear></div>';
 
     $('#CalHead').html(html);
 
     $('.List').html(
-       '<table id=List><thead>'
-       + '<tr>'
-       + '<th colspan=3>Year <span class=showYear></span></th>'
-       + '<th class=Sunset>Ending</th>'
-       + '<th class=Gregorian colspan=3>Gregorian (Bahá’í days start at sunset on the eve prior to start of the Gregorian day.)</th>'
-       + '</tr>'
-       + '<tr>'
-       + '<th class=Num>#</th>'
-       + '<th class=Name1>Name</th>'
-       + '<th>Dates</th>'
-       + '<th class=Sunset>Sunset</th>'
-       + '<th class=Gregorian>Week Day</th>'
-       + '<th class=Gregorian>Date</th>' //(<span class=gYear></span>)
-       + '<th class="Gregorian ForFeast ForStartTime">Event Time <select class=Feast id=StartTime><option value=1900>Start 7:00pm</option><option value=1930>Start 7:30pm</option><option value=2000>Start 8:00pm</option></select><span class="help" title="Tip: Select the desired start time to know if the event falls before or after sunset."></span></th>'
-//       + '<th class=Gregorian>Dates</th>'
-       + '</tr>'
-       + '</thead><tbody>'
-       + '</tbody></table>'
-       + '<p class=footer>Last modified on 7 Bahá (Splendor) 172.</p>'
-       );
+      '<table id=List><thead>'
+      + '<tr>'
+      + '<th colspan=3>Year <span class=showYear></span></th>'
+      + '<th class=Sunset>Ending</th>'
+      + '<th class=Gregorian colspan=3>Gregorian (Bahá’í days start at sunset on the eve prior to start of the Gregorian day.)</th>'
+      + '</tr>'
+      + '<tr>'
+      + '<th class=Num>#</th>'
+      + '<th class=Name1>Name</th>'
+      + '<th>Dates</th>'
+      + '<th class=Sunset>Sunset</th>'
+      + '<th class=Gregorian>Week Day</th>'
+      + '<th class=Gregorian>Date</th>' //(<span class=gYear></span>)
+      + '<th class="Gregorian ForFeast ForStartTime">Event Time <select class=Feast id=StartTime><option value=1900>Start 7:00pm</option><option value=1930>Start 7:30pm</option><option value=2000>Start 8:00pm</option></select><span class="help" title="Tip: Select the desired start time to know if the event falls before or after sunset."></span></th>'
+      //       + '<th class=Gregorian>Dates</th>'
+      + '</tr>'
+      + '</thead><tbody>'
+      + '</tbody></table>'
+      + '<p class=footer>Last modified on 7 Bahá (Splendor) 172.</p>'
+    );
   }
 
 
@@ -123,45 +121,45 @@ var HolyDays = function () {
     }
 
     $('#WantFeast')
-       .click(function () { ApplyFilters(); localStorage.WantFeast = $(this).prop('checked'); })
-       .prop('checked', localStorage.WantFeast == 'true');
+      .click(function () { ApplyFilters(); localStorage.WantFeast = $(this).prop('checked'); })
+      .prop('checked', localStorage.WantFeast == 'true');
 
     $('#WantHolyDay')
-       .click(function () { ApplyFilters(); localStorage.WantHolyDay = $(this).prop('checked'); })
-       .prop('checked', localStorage.WantHolyDay == 'true');
+      .click(function () { ApplyFilters(); localStorage.WantHolyDay = $(this).prop('checked'); })
+      .prop('checked', localStorage.WantHolyDay == 'true');
 
     $('#WantOther')
-       .click(function () { ApplyFilters(); localStorage.WantOther = $(this).prop('checked'); })
-       .prop('checked', localStorage.WantOther == 'true');
+      .click(function () { ApplyFilters(); localStorage.WantOther = $(this).prop('checked'); })
+      .prop('checked', localStorage.WantOther == 'true');
 
     $('#WantFast')
-       .click(function () { ApplyFilters(); localStorage.WantFast = $(this).prop('checked'); })
-       .prop('checked', localStorage.WantFast == 'true');
+      .click(function () { ApplyFilters(); localStorage.WantFast = $(this).prop('checked'); })
+      .prop('checked', localStorage.WantFast == 'true');
 
     $('#ShowEve')
-       .click(function () { ApplyFilters(); localStorage.ShowEve = $(this).prop('checked'); })
-       .prop('checked', localStorage.ShowEve == 'true');
+      .click(function () { ApplyFilters(); localStorage.ShowEve = $(this).prop('checked'); })
+      .prop('checked', localStorage.ShowEve == 'true');
 
     $('#ShowToday')
-       .click(function () { ApplyFilters(); localStorage.ShowToday = $(this).prop('checked'); })
-       .prop('checked', localStorage.ShowToday == 'true');
+      .click(function () { ApplyFilters(); localStorage.ShowToday = $(this).prop('checked'); })
+      .prop('checked', localStorage.ShowToday == 'true');
 
     $('#ShowSunset')
-       .click(function () { ApplyFilters(); localStorage.ShowSunset = $(this).prop('checked'); })
-       .prop('checked', localStorage.ShowSunset == 'true');
+      .click(function () { ApplyFilters(); localStorage.ShowSunset = $(this).prop('checked'); })
+      .prop('checked', localStorage.ShowSunset == 'true');
 
     var ddlYear = $('#DesiredYear');
     ddlYear
-       .change(function () { showDatesInYear($('.List'), ddlYear.val()); localStorage.Year = ddlYear.val(); })
-       .val(localStorage.Year || _now.getBadiYear());
+      .change(function () { showDatesInYear($('.List'), ddlYear.val()); localStorage.Year = ddlYear.val(); })
+      .val(localStorage.Year || _now.getBadiYear());
     if (!ddlYear.val()) {
       ddlYear.val(_now.getBadiYear());
     }
 
     var ddlStartTime = $('#StartTime');
     ddlStartTime
-       .change(function () { showDatesInYear($('.List'), ddlYear.val()); localStorage.StartTime = ddlStartTime.val(); })
-       .val(localStorage.StartTime || '1930');
+      .change(function () { showDatesInYear($('.List'), ddlYear.val()); localStorage.StartTime = ddlStartTime.val(); })
+      .val(localStorage.StartTime || '1930');
 
     $('#lat').change(function (ev) {
       _locationLat = +ev.target.value;
@@ -208,7 +206,7 @@ var HolyDays = function () {
         var ddl = $('#DesiredYear');
         var select = ddl[0];
         if (delta == 1 && select.selectedIndex < select.options.length - 1
-           || delta == -1 && select.selectedIndex > 0) {
+          || delta == -1 && select.selectedIndex > 0) {
           select.selectedIndex = select.selectedIndex + delta;;
           ddl.trigger('change');
           ev.preventDefault();
@@ -217,23 +215,23 @@ var HolyDays = function () {
     });
   }
 
-  function ShowBYearWithGYear(bYear){
+  function ShowBYearWithGYear(bYear) {
     var gYear = bYear + 1843;
     return bYear + ' (' + gYear + '-' + ('0' + ((gYear + 1) % 100)).substr(-2) + ')'
   }
-  
+
   function FillYearsList() {
     var options = [];
     for (var i = 1; i <= _lastYearDefined; i++) {
 
       var nawRuzOffset = _nawRuzOffsetFrom21[i];
       var note = nawRuzOffset == -1 ? '*'   // in order of likelihood
-                : nawRuzOffset == -2 ? '**'
-                : '';
+        : nawRuzOffset == -2 ? '**'
+          : '';
 
       options.push('<option value=' + i + '>' + ShowBYearWithGYear(i)
-          + note
-          + '</option>');
+        + note
+        + '</option>');
     }
 
     var currentBYear = _now.getFullYear() - 1843 + _now.isAfterNawRuz();
@@ -368,8 +366,8 @@ var HolyDays = function () {
       }
 
       dateInfo.gYear = 1843 +
-                      +bYear +
-                      +(dateInfo.GYearOffset || 0);
+        +bYear +
+        +(dateInfo.GYearOffset || 0);
 
       if (!dateInfo.GDate) {
         dateInfo.GDate = getGDateYBDate(bYear, dateInfo.BMonthDay);
@@ -433,8 +431,8 @@ var HolyDays = function () {
     $('.YearComment').hide();
     var nawRuzOffset = _nawRuzOffsetFrom21[bYear];
     var yearNote = nawRuzOffset == -1 ? 1
-                  : nawRuzOffset == -2 ? 2
-                  : 0;
+      : nawRuzOffset == -2 ? 2
+        : 0;
     $('#yearComment' + yearNote).fadeIn();
 
     var thbWarningGiven = false;
@@ -459,16 +457,16 @@ var HolyDays = function () {
 
       if (dateInfo.Type == 'M') {
         rows.push(
-           '<tr class=Feast>'
-         + '<td class=Num>' + dateInfo.MonthNum + '</td>'
-         + '<td class=Name2>' + dateInfo.NameAr + ' (' + dateInfo.NameEn + ')</td>'
-         + '<td class=FromTo>' + ShortBadi({ m: dateInfo.MonthNum, d: 1 }) + ' - 19</td>'
-         + '<td class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
-         + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
-         + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>'
-         + '<td class="ForFeast" data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
-         + '</tr>'
-         );
+          '<tr class=Feast>'
+          + '<td class=Num>' + dateInfo.MonthNum + '</td>'
+          + '<td class=Name2>' + dateInfo.NameAr + ' (' + dateInfo.NameEn + ')</td>'
+          + '<td class=FromTo>' + ShortBadi({ m: dateInfo.MonthNum, d: 1 }) + ' - 19</td>'
+          + '<td class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
+          + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
+          + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>'
+          + '<td class="ForFeast" data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
+          + '</tr>'
+        );
       }
 
       else if (dateInfo.Type.substr(0, 1) == 'H') {
@@ -485,75 +483,75 @@ var HolyDays = function () {
 
 
         rows.push(
-             '<tr class="HolyDay HolyDay' + dateInfo.Type + '">'
-           + '<td class=blank></td>'
-           + '<td class=NameLong>' + dateInfo.NameEn + '</td>'
-           + '<td>' + ShortBadi(dateInfo.BMonthDay) + '</td>'
-           + '<td class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
-           + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
-           + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>' //+ ', ' + dateInfo.gYear
-           + '<td class="ForStartTime"' + (dateInfo.TimeReason ? (' title="' + dateInfo.TimeReason + '"') : '') + '" data-time="' + (dateInfo.Time || '') + '" data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
-           + '</tr>'
-           );
+          '<tr class="HolyDay HolyDay' + dateInfo.Type + '">'
+          + '<td class=blank></td>'
+          + '<td class=NameLong>' + dateInfo.NameEn + '</td>'
+          + '<td>' + ShortBadi(dateInfo.BMonthDay) + '</td>'
+          + '<td class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
+          + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
+          + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>' //+ ', ' + dateInfo.gYear
+          + '<td class="ForStartTime"' + (dateInfo.TimeReason ? (' title="' + dateInfo.TimeReason + '"') : '') + '" data-time="' + (dateInfo.Time || '') + '" data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
+          + '</tr>'
+        );
       }
 
       else if (dateInfo.Type == 'OtherRange') {
         var otherRangeName = dateInfo.NameAr ? (dateInfo.NameAr + ' (' + dateInfo.NameEn + ')') : dateInfo.NameEn;
         rows.push(
-             '<tr class=OtherDay>'
-           + '<td class=blank></td>'
-           + '<td class=NameLong>' + otherRangeName + '</td>'
-           + '<td>' + ShortBadi(dateInfo.BMonthDay) + ' - ' + (dateInfo.BMonthDay.m == dateInfo.BMonthDayTo.m ? dateInfo.BMonthDayTo.d : ShortBadi(dateInfo.BMonthDayTo)) + '</td>'
-           + '<td class=Sunset></td>'
-           + '<td>' + dateInfo.GDate.getDayNames() + ' - ' + dateInfo.GDateTo.getDayNames() + '</td>'
-           // all date ranges are in same gYear, so don't need to check 
-           + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ' - ' + ShortGregDate(dateInfo.GDateTo) + ', ' + dateInfo.gYear + '</td>'
-           + '<td class=ForFeast></td>'
-           //+ '<td class=FromTo>' + ShortGregDate(dateInfo.GDate) + ' - ' + ShortGregDate(dateInfo.GDateTo) + '</td>'
-           + '</tr>'
-           );
+          '<tr class=OtherDay>'
+          + '<td class=blank></td>'
+          + '<td class=NameLong>' + otherRangeName + '</td>'
+          + '<td>' + ShortBadi(dateInfo.BMonthDay) + ' - ' + (dateInfo.BMonthDay.m == dateInfo.BMonthDayTo.m ? dateInfo.BMonthDayTo.d : ShortBadi(dateInfo.BMonthDayTo)) + '</td>'
+          + '<td class=Sunset></td>'
+          + '<td>' + dateInfo.GDate.getDayNames() + ' - ' + dateInfo.GDateTo.getDayNames() + '</td>'
+          // all date ranges are in same gYear, so don't need to check 
+          + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ' - ' + ShortGregDate(dateInfo.GDateTo) + ', ' + dateInfo.gYear + '</td>'
+          + '<td class=ForFeast></td>'
+          //+ '<td class=FromTo>' + ShortGregDate(dateInfo.GDate) + ' - ' + ShortGregDate(dateInfo.GDateTo) + '</td>'
+          + '</tr>'
+        );
       }
 
       else if (dateInfo.Type == 'OtherDay') {
         rows.push(
-             '<tr class=' + dateInfo.Type + '>'
-           + '<td class=blank></td>'
-           + '<td class=NameLong>' + dateInfo.NameEn + '</td>'
-           + '<td>' + ShortBadi(dateInfo.BMonthDay) + '</td>'
-           + '<td class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
-           + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
-           + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>'
-           + '<td class=ForFeast></td>'
-           + '</tr>'
-           );
+          '<tr class=' + dateInfo.Type + '>'
+          + '<td class=blank></td>'
+          + '<td class=NameLong>' + dateInfo.NameEn + '</td>'
+          + '<td>' + ShortBadi(dateInfo.BMonthDay) + '</td>'
+          + '<td class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
+          + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
+          + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>'
+          + '<td class=ForFeast></td>'
+          + '</tr>'
+        );
       }
 
       else if (dateInfo.Type == 'Today') {
         rows.push(
-             '<tr class=' + dateInfo.Type + '>'
-           + '<td class=blank></td>'
-           + '<td class=NameLong>' + dateInfo.NameEn + '</td>'
-           + '<td>' + ShortBadi(dateInfo.BMonthDay) + '</td>'
-           + '<td class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
-           + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
-           + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>'
-           + '<td class="ForStartTime Today" data-time="' + dateInfo.Time + '" data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
-           + '</tr>'
-           );
+          '<tr class=' + dateInfo.Type + '>'
+          + '<td class=blank></td>'
+          + '<td class=NameLong>' + dateInfo.NameEn + '</td>'
+          + '<td>' + ShortBadi(dateInfo.BMonthDay) + '</td>'
+          + '<td class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
+          + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
+          + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>'
+          + '<td class="ForStartTime Today" data-time="' + dateInfo.Time + '" data-gdate="' + dateInfo.GDate.getTime() + '"></td>'
+          + '</tr>'
+        );
       }
 
       else if (dateInfo.Type == 'Fast') {
         rows.push(
-             '<tr class=' + dateInfo.Type + '>'
-           + '<td class=blank></td>'
-           + '<td class=NameLong>' + dateInfo.NameEn + '</td>'
-           + '<td>' + ShortBadi(dateInfo.BMonthDay) + '</td>'
-           + '<td class="FastTimes Sunset"><span class=Sunrise data-gdate="' + dateInfo.GDate.getTime() + '"></span> - <span class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></span></td>'
-           + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
-           + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>'
-           + '<td class=ForFeast></td>'
-           + '</tr>'
-           );
+          '<tr class=' + dateInfo.Type + '>'
+          + '<td class=blank></td>'
+          + '<td class=NameLong>' + dateInfo.NameEn + '</td>'
+          + '<td>' + ShortBadi(dateInfo.BMonthDay) + '</td>'
+          + '<td class="FastTimes Sunset"><span class=Sunrise data-gdate="' + dateInfo.GDate.getTime() + '"></span> - <span class=Sunset data-gdate="' + dateInfo.GDate.getTime() + '"></span></td>'
+          + '<td>' + dateInfo.GDate.getDayNames() + '</td>'
+          + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ', ' + dateInfo.gYear + '</td>'
+          + '<td class=ForFeast></td>'
+          + '</tr>'
+        );
       }
 
       else {
@@ -570,61 +568,61 @@ var HolyDays = function () {
 
   var dateInfosRaw = function () {
     return [
-    /* fields
-       Type - M (Month),HS (Holy Day standard),HO (Holy Day other),OtherDay,OtherRange
-       NameEn - English name
-       NameAr - Arabic name
-       MonthNum - Badi month number
-       BDateCode - MM.DD month and day in Badi calendar (calculated for Month entries)
-       BDateCodeTo - last day of a range - MM.DD month and day in Badi calendar (calculated for Month entries)
-       UntilYear - Badi year this day is in effect until
-       FromYear - Badi year this day is in effect from
-    */
-    { Type: 'M', NameEn: 'Splendor', NameAr: 'Bah&aacute;', MonthNum: 1 },
-    { Type: 'M', NameEn: 'Glory', NameAr: 'Jal&aacute;l', MonthNum: 2 },
-    { Type: 'M', NameEn: 'Beauty', NameAr: 'Jam&aacute;l', MonthNum: 3 },
-    { Type: 'M', NameEn: 'Grandeur', NameAr: '`Azamat', MonthNum: 4 },
-    { Type: 'M', NameEn: 'Light', NameAr: 'N&uacute;r', MonthNum: 5 },
-    { Type: 'M', NameEn: 'Mercy', NameAr: 'Rahmat', MonthNum: 6 },
-    { Type: 'M', NameEn: 'Words', NameAr: 'Kalim&aacute;t', MonthNum: 7 },
-    { Type: 'M', NameEn: 'Perfection', NameAr: 'Kam&aacute;l', MonthNum: 8 },
-    { Type: 'M', NameEn: 'Names', NameAr: "Asm&aacute;'", MonthNum: 9 },
-    { Type: 'M', NameEn: 'Might', NameAr: '`Izzat', MonthNum: 10 },
-    { Type: 'M', NameEn: 'Will', NameAr: 'Mash&iacute;yyat', MonthNum: 11 },
-    { Type: 'M', NameEn: 'Knowledge', NameAr: '`Ilm', MonthNum: 12 },
-    { Type: 'M', NameEn: 'Power', NameAr: 'Qudrat', MonthNum: 13 },
-    { Type: 'M', NameEn: 'Speech', NameAr: 'Qawl', MonthNum: 14 },
-    { Type: 'M', NameEn: 'Questions', NameAr: "Mas&aacute;'&iacute;l", MonthNum: 15 },
-    { Type: 'M', NameEn: 'Honor', NameAr: 'Sharaf', MonthNum: 16 },
-    { Type: 'M', NameEn: 'Sovereignty', NameAr: 'Sult&aacute;n', MonthNum: 17 },
-    { Type: 'M', NameEn: 'Dominion', NameAr: 'Mulk', MonthNum: 18 },
-    { Type: 'M', NameEn: 'Loftiness', NameAr: "`Al&aacute;'", MonthNum: 19 },
+      /* fields
+         Type - M (Month),HS (Holy Day standard),HO (Holy Day other),OtherDay,OtherRange
+         NameEn - English name
+         NameAr - Arabic name
+         MonthNum - Badi month number
+         BDateCode - MM.DD month and day in Badi calendar (calculated for Month entries)
+         BDateCodeTo - last day of a range - MM.DD month and day in Badi calendar (calculated for Month entries)
+         UntilYear - Badi year this day is in effect until
+         FromYear - Badi year this day is in effect from
+      */
+      { Type: 'M', NameEn: 'Splendor', NameAr: 'Bah&aacute;', MonthNum: 1 },
+      { Type: 'M', NameEn: 'Glory', NameAr: 'Jal&aacute;l', MonthNum: 2 },
+      { Type: 'M', NameEn: 'Beauty', NameAr: 'Jam&aacute;l', MonthNum: 3 },
+      { Type: 'M', NameEn: 'Grandeur', NameAr: '`Azamat', MonthNum: 4 },
+      { Type: 'M', NameEn: 'Light', NameAr: 'N&uacute;r', MonthNum: 5 },
+      { Type: 'M', NameEn: 'Mercy', NameAr: 'Rahmat', MonthNum: 6 },
+      { Type: 'M', NameEn: 'Words', NameAr: 'Kalim&aacute;t', MonthNum: 7 },
+      { Type: 'M', NameEn: 'Perfection', NameAr: 'Kam&aacute;l', MonthNum: 8 },
+      { Type: 'M', NameEn: 'Names', NameAr: "Asm&aacute;'", MonthNum: 9 },
+      { Type: 'M', NameEn: 'Might', NameAr: '`Izzat', MonthNum: 10 },
+      { Type: 'M', NameEn: 'Will', NameAr: 'Mash&iacute;yyat', MonthNum: 11 },
+      { Type: 'M', NameEn: 'Knowledge', NameAr: '`Ilm', MonthNum: 12 },
+      { Type: 'M', NameEn: 'Power', NameAr: 'Qudrat', MonthNum: 13 },
+      { Type: 'M', NameEn: 'Speech', NameAr: 'Qawl', MonthNum: 14 },
+      { Type: 'M', NameEn: 'Questions', NameAr: "Mas&aacute;'&iacute;l", MonthNum: 15 },
+      { Type: 'M', NameEn: 'Honor', NameAr: 'Sharaf', MonthNum: 16 },
+      { Type: 'M', NameEn: 'Sovereignty', NameAr: 'Sult&aacute;n', MonthNum: 17 },
+      { Type: 'M', NameEn: 'Dominion', NameAr: 'Mulk', MonthNum: 18 },
+      { Type: 'M', NameEn: 'Loftiness', NameAr: "`Al&aacute;'", MonthNum: 19 },
 
-    { Type: 'HS', BDateCode: '1.1', NameEn: 'Naw R&uacute;z' },
-    { Type: 'HS', BDateCode: '2.13', NameEn: 'First Day of Ridv&aacute;n', Time: '1500S', TimeReason: '3 pm Standard time' },
-    { Type: 'HS', BDateCode: '3.2', NameEn: 'Ninth Day of Ridv&aacute;n' },
-    { Type: 'HS', BDateCode: '3.5', NameEn: 'Twelveth Day of Ridv&aacute;n' },
-    { Type: 'HS', BDateCode: '4.13', NameEn: "Ascension of Bah&aacute;'u'll&aacute;h", Time: '0300S', TimeReason: '3 am Standard time' },
+      { Type: 'HS', BDateCode: '1.1', NameEn: 'Naw R&uacute;z' },
+      { Type: 'HS', BDateCode: '2.13', NameEn: 'First Day of Ridv&aacute;n', Time: '1500S', TimeReason: '3 pm Standard time' },
+      { Type: 'HS', BDateCode: '3.2', NameEn: 'Ninth Day of Ridv&aacute;n' },
+      { Type: 'HS', BDateCode: '3.5', NameEn: 'Twelveth Day of Ridv&aacute;n' },
+      { Type: 'HS', BDateCode: '4.13', NameEn: "Ascension of Bah&aacute;'u'll&aacute;h", Time: '0300S', TimeReason: '3 am Standard time' },
 
-    { Type: 'HS', UntilYear: 171, BDateCode: '4.7', NameEn: 'Declaration of the B&aacute;b', Time: 'SS+2', TimeReason: 'about 2 hours after sunset' },
-    { Type: 'HS', FromYear: 172, BDateCode: '4.8', NameEn: 'Declaration of the B&aacute;b', Time: 'SS+2', TimeReason: 'about 2 hours after sunset' },
+      { Type: 'HS', UntilYear: 171, BDateCode: '4.7', NameEn: 'Declaration of the B&aacute;b', Time: 'SS+2', TimeReason: 'about 2 hours after sunset' },
+      { Type: 'HS', FromYear: 172, BDateCode: '4.8', NameEn: 'Declaration of the B&aacute;b', Time: 'SS+2', TimeReason: 'about 2 hours after sunset' },
 
-    { Type: 'HS', UntilYear: 171, BDateCode: '6.16', NameEn: 'Martyrdom of the B&aacute;b', Time: '1200S', TimeReason: 'Noon Standard time' },
-    { Type: 'HS', FromYear: 172, BDateCode: '6.17', NameEn: 'Martyrdom of the B&aacute;b', Time: '1200S', TimeReason: 'Noon Standard time' },
+      { Type: 'HS', UntilYear: 171, BDateCode: '6.16', NameEn: 'Martyrdom of the B&aacute;b', Time: '1200S', TimeReason: 'Noon Standard time' },
+      { Type: 'HS', FromYear: 172, BDateCode: '6.17', NameEn: 'Martyrdom of the B&aacute;b', Time: '1200S', TimeReason: 'Noon Standard time' },
 
-    { Type: 'HS', UntilYear: 171, BDateCode: '12.5', NameEn: 'Birth of the B&aacute;b' },
-    { Type: 'HS', UntilYear: 171, BDateCode: '13.9', NameEn: "Birth of Bah&aacute;'u'll&aacute;h" },
-    { Type: 'HS', FromYear: 172, Special: 'THB.1', NameEn: 'Birth of the B&aacute;b' },
-    { Type: 'HS', FromYear: 172, Special: 'THB.2', NameEn: "Birth of Bah&aacute;'u'll&aacute;h" },
+      { Type: 'HS', UntilYear: 171, BDateCode: '12.5', NameEn: 'Birth of the B&aacute;b' },
+      { Type: 'HS', UntilYear: 171, BDateCode: '13.9', NameEn: "Birth of Bah&aacute;'u'll&aacute;h" },
+      { Type: 'HS', FromYear: 172, Special: 'THB.1', NameEn: 'Birth of the B&aacute;b' },
+      { Type: 'HS', FromYear: 172, Special: 'THB.2', NameEn: "Birth of Bah&aacute;'u'll&aacute;h" },
 
-    { Type: 'HO', BDateCode: '14.4', NameEn: 'Day of the Covenant' },
-    { Type: 'HO', BDateCode: '14.6', NameEn: "Ascension of `Abdu'l-Bah&aacute;", Time: '0100S', TimeReason: '1 am Standard time' },
+      { Type: 'HO', BDateCode: '14.4', NameEn: 'Day of the Covenant' },
+      { Type: 'HO', BDateCode: '14.6', NameEn: "Ascension of `Abdu'l-Bah&aacute;", Time: '0100S', TimeReason: '1 am Standard time' },
 
-    { Type: 'OtherRange', BDateCode: '2.13', BDateCodeTo: '3.5', NameEn: 'Festival of Ridv&aacute;n' },
-    { Type: 'OtherRange', Special: 'AYYAM.Intercalary', NameAr: 'Ayyám-i-Há', NameEn: 'Intercalary Days' },
+      { Type: 'OtherRange', BDateCode: '2.13', BDateCodeTo: '3.5', NameEn: 'Festival of Ridv&aacute;n' },
+      { Type: 'OtherRange', Special: 'AYYAM.Intercalary', NameAr: 'Ayyám-i-Há', NameEn: 'Intercalary Days' },
 
-    { Type: 'OtherDay', BDateCode: '2.13', NameEn: 'Annual Meeting and Election' },
-    { Type: 'OtherDay', Special: 'JAN1', NameEn: 'Start of Gregorian Year ' }
+      { Type: 'OtherDay', BDateCode: '2.13', NameEn: 'Annual Meeting and Election' },
+      { Type: 'OtherDay', Special: 'JAN1', NameEn: 'Start of Gregorian Year ' }
     ];
   };
 
@@ -802,56 +800,56 @@ var HolyDays = function () {
   var _nawRuzOffsetFrom21 = {
     // by default and historically, on March 21. If not, year is listed here with the offset... 173 is March 20
     // can be 0, -1, -2? and will never change by more than 1 day between years
-    173:-1,
-    174:-1,
-    175:0,
-    176:0,
-    177:-1,
-    178:-1,
-    179:0,
-    180:0,
-    181:-1,
-    182:-1,
-    183:0,
-    184:0,
-    185:-1,
-    186:-1,
-    187:-1,
-    188:0,
-    189:-1,
-    190:-1,
-    191:-1,
-    192:0,
-    193:-1,
-    194:-1,
-    195:-1,
-    196:0,
-    197:-1,
-    198:-1,
-    199:-1,
-    200:0,
-    201:-1,
-    202:-1,
-    203:-1,
-    204:0,
-    205:-1,
-    206:-1,
-    207:-1,
-    208:0,
-    209:-1,
-    210:-1,
-    211:-1,
-    212:0,
-    213:-1,
-    214:-1,
-    215:-1,
-    216:-1,
-    217:-1,
-    218:-1,
-    219:-1,
-    220:-1,
-    221:-1,
-    222:-1  // implied on the "Baha'i Dates 172 to 221 B.E." document, as Ayyam-i-Há is shown to end on Feb 28
+    173: -1,
+    174: -1,
+    175: 0,
+    176: 0,
+    177: -1,
+    178: -1,
+    179: 0,
+    180: 0,
+    181: -1,
+    182: -1,
+    183: 0,
+    184: 0,
+    185: -1,
+    186: -1,
+    187: -1,
+    188: 0,
+    189: -1,
+    190: -1,
+    191: -1,
+    192: 0,
+    193: -1,
+    194: -1,
+    195: -1,
+    196: 0,
+    197: -1,
+    198: -1,
+    199: -1,
+    200: 0,
+    201: -1,
+    202: -1,
+    203: -1,
+    204: 0,
+    205: -1,
+    206: -1,
+    207: -1,
+    208: 0,
+    209: -1,
+    210: -1,
+    211: -1,
+    212: 0,
+    213: -1,
+    214: -1,
+    215: -1,
+    216: -1,
+    217: -1,
+    218: -1,
+    219: -1,
+    220: -1,
+    221: -1,
+    222: -1  // implied on the "Baha'i Dates 172 to 221 B.E." document, as Ayyam-i-Há is shown to end on Feb 28
   };
   // tables of vernal equinox dates seem to indicate that it will be March 20 for the next 30+ years
   //for (var y = 174; y < 200; y++) { _nawRuzOffsetFrom21[y] = -1; }
@@ -1202,9 +1200,9 @@ Date.prototype.getEveDate = function () {
   x.setDate(x.getDate() - 1);
   return x;
 }
-Date.prototype.getTimezoneName = function(){
+Date.prototype.getTimezoneName = function () {
   // very simple method
-  
+
 }
 
 // other
