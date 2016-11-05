@@ -8,21 +8,50 @@
         below to turn it on!</p>
 
     <h2>Setup</h2>
-    <p class="step1_">&#10144; Checking location status...</p>
-    <p class="step1 step1_false">&#10144; Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
-    <p class="step1 step1_true">&#10004; Your location is reported as "<span class="locationEcho"></span>". <button type="button" id="btnGetLocation2">Refresh</button></p>
-    <blockquote class="time step1 step1_true"></blockquote>
 
     <p class="step2_">&#10144; Checking notification status...</p>
     <p class="step2 step2_false">&#10144; Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
     <p class="step2 step2_true">&#10004; You have enabled notifications on this device.</p>
     <blockquote class="step2 step2_true"><button class="testNow">Test Now!</button></blockquote>
 
+    <p class="step1_">&#10144; Checking location status...</p>
+    <p class="step1 step1_false">&#10144; Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
+    <p class="step1 step1_true">&#10004; Your location is reported as "<span class="locationEcho"></span>". <button type="button" id="btnGetLocation2" class="small">Refresh</button></p>
+    <blockquote class="time step1 step1_true"></blockquote>
+
     <p class="step3 step3_true">&#10004; When do you want to be notified?</p>
-    <blockquote class="step3 step3_true">
-        <div id="whenSunset"><label><input type="checkbox" id="sunset"> Every evening at sunset</label> </div>
-        <div id="whenSunrise"><label><input type="checkbox" id="sunrise"> Every morning at sunrise</label> </div>
-        <div id="whenCustom"><label><input type="checkbox" id="custom"> Every day at <input type="time" id="customWhen"></label> </div>
+    <blockquote class="step3 step3_true when">
+        <h3>Your Notifications</h3>
+        <div id="whenList"></div>
+        <fieldset>
+            <legend>Add a new notification</legend>
+        <div id="whenSunset">Get a notification <select id="sunOffset">
+            <option value="00">30 minutes before</option>
+            <option value="15">15 minutes before</option>
+            <option value="20">10 minutes before</option>
+            <option value="25">5 minutes before</option>
+            <option value="26">4 minutes before</option>
+            <option value="27">3 minutes before</option>
+            <option value="28">2 minutes before</option>
+            <option value="29">1 minute before</option>
+            <option value="30" selected="selected">At</option>
+            <option value="31">1 minute after</option>
+            <option value="32">2 minutes after</option>
+            <option value="33">3 minutes after</option>
+            <option value="34">4 minutes after</option>
+            <option value="35">5 minutes after</option>
+            <option value="40">10 minutes after</option>
+            <option value="45">15 minutes after</option>
+            <option value="60">30 minutes after</option>
+            </select> 
+            <select id="sunType">
+                <option value="sunset" class="when_sunset">sunset</option>
+                <option value="sunrise" class="when_sunrise">sunrise</option>
+            </select>
+             <button id="addSun">Add</button>
+             </div>
+        <div id="whenCustom">Get a notification every day at <input type="time" id="customWhen"> <button id="addWhen">Add</button> </div>
+        </fieldset>
         <div class="whenResult whenResult_true">Saved!</div>
         <div class="whenResult whenResult_false">Not saved</div>
     </blockquote>

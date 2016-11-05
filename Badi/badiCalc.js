@@ -79,13 +79,16 @@ function getDateMessage(profile) {
   var zoneName = profile.tags.zoneName;
   var nowTz = moment.tz(zoneName);
 
-  var coord = profile.coord;
+  var coord = {
+    lat: +profile.tags.latitude,
+    lng: +profile.tags.longitude
+  };
   var bDateInfo = getBDateInfo(nowTz, coord, zoneName);
   var bDate = bDateInfo.bDate;
 
   var nowHours = nowTz.hours();
 
-  answers.title = `${monthMeaning[bDate.m]} (${monthAr[bDate.m]}) ${bDate.d}`;
+  answers.title = `Today is ${monthMeaning[bDate.m]} (${monthAr[bDate.m]}) ${bDate.d}`;
   //(${monthMeaning[bDate.d]})
 
   //  console.log('local now: ' + nowTz.format())
@@ -100,6 +103,7 @@ function getDateMessage(profile) {
   } else {
     answers.text = (`It lasts until sunset at ${bDateInfo.endingSunset.format('HH:mm')}.`);
   }
+  return answers;
 }
 
 var getBDateInfo = function (nowTz, coord, zoneName) {

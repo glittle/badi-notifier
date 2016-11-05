@@ -13,7 +13,7 @@ var Notify = function () {
                 settings.tags = tags;
                 console.log('got tags');
                 console.log(tags);
-                applyWhen(tags);
+                applyWhens(tags.when);
             });
             OneSignal.getUserId(function (userId, a, b) {
                 settings.userId = userId;
@@ -37,19 +37,98 @@ var Notify = function () {
         $('#btnGetLocation, #btnGetLocation2').click(btnGetLocation);
         $('#btnEnableNotification').click(btnEnableNotification);
         $('.testNow').click(btnTestNow);
-        $('.when').on('change', 'input[type=checkbox]', setWhen)
-        $('.when').on('change', 'input[type=time]', function (ev) {
-            var cb = $(ev.target).closest('div').find('input[type=checkbox]');
-            if (cb.prop('checked')) {
-                cb.trigger('change');
-            }
-        })
+        $('#addSun').click(addSunWhen);
+        $('#addWhen').click(addTimeWhen);
+        $('#whenList').on('click', '.removeWhen', removeWhen);
 
         if (settings.locationName) {
             showLocationInfo(settings.locationName);
         } else {
             showStep(1, false);
         }
+    }
+
+    function removeWhen(ev) {
+        var btn = $(ev.target);
+        var row = btn.closest('div');
+        row.remove();
+
+        saveAllWhens();
+    }
+
+    function addSunWhen() {
+        var ddlType = $('#sunType');
+        var ddlOffset = $('#sunOffset');
+        var when = ddlType.val() + '@' + ddlOffset.val();
+        var list = $('#whenList');
+
+        // check for duplicates
+        if (list.find(`div[data-when="${when}"]`).length) {
+            return;
+        }
+        showWhen(when);
+        saveAllWhens();
+    }
+
+    function addTimeWhen() {
+        var input = $('#customWhen');
+        var time = input.val();
+        if (!time) {
+            return;
+        }
+
+        var list = $('#whenList');
+
+        // check for duplicates
+        if (list.find(`div[data-when="${time}"]`).length) {
+            return;
+        }
+        showWhen(time);
+        saveAllWhens();
+    }
+
+    function showWhen(when) {
+        var parts = when.split('@');
+        var list = $('#whenList');
+        var html;
+        switch (parts.length) {
+            case 1:
+                html = `<div data-when="${when}"><span>${when} daily</span><button class="removeWhen">X</button></div>`
+                break;
+
+            case 2:
+                var ddlType = $('#sunType');
+                var ddlOffset = $('#sunOffset');
+
+                var minutes = parts[1];
+                var display = ddlOffset.find(`option[value="${minutes}"]`).text()
+                    + ' '
+                    + ddlType.find(`option[value="${parts[0]}"]`).text();
+
+                html = `<div class="when_${parts[0]}" data-when="${when}"><span>${display}</span><button class="removeWhen">X</button></div>`
+
+                break;
+        }
+        list.append(html);
+        sortWhens();
+    }
+    function sortWhens() {
+        var list = $('#whenList'),
+            items = list.children('div');
+        items.sort(function (a, b) {
+            var an = a.getAttribute('data-when'),
+                bn = b.getAttribute('data-when');
+
+            if (an > bn) {
+                return 1;
+            }
+            if (an < bn) {
+                return -1;
+            }
+            return 0;
+        });
+
+        items.detach().appendTo(list);
     }
 
     function showTime() {
@@ -74,45 +153,28 @@ var Notify = function () {
         })
     }
 
-    function applyWhen(tags) {
-        var when = tags.when;
-        $('input#sunset').prop('checked', when.search('sunset') !== -1);
-        $('input#sunrise').prop('checked', when.search('sunrise') !== -1);
-        $('input#custom').prop('checked', when.search(':') !== -1);
-        var parts = when.split(',');
-        for (var i = 0; i < parts.length; i++) {
-            var part = parts[i];
-            if (part.search(':') !== -1) {
-                $('input#customWhen').val(part);
-                //only one for now
-                break;
-            }
+    function applyWhens(whens) {
+        var list = whens.split(',');
+        for (var i = 0; i < list.length; i++) {
+            showWhen(list[i]);
         }
+        sortWhens();
     }
 
-
-    function setWhen(ev) {
+    function saveAllWhens() {
         if (!settings.userId) {
             console.log('no userid... cannot test');
             return;
         }
-        $('.whenResult').hide();
-        // var when = $('#when').serialize();
-        var parts = [];
-        if ($('input#sunset').prop('checked')) {
-            parts.push('sunset');
-        }
-        if ($('input#sunrise').prop('checked')) {
-            parts.push('sunrise');
-        }
+        var whens = [];
+        $('#whenList > div').each(function (i, el) {
+            whens.push(el.getAttribute('data-when'));
+        })
 
-        if ($('input#custom').prop('checked')) {
-            var time = $('input#customWhen').val();
-            if (time) {
-                parts.push(time);
-            }
-        }
-        var when = parts.join(',');
+        var when = whens.join(',');
+
+        // console.log(when);
+
         callAjax('/setWhen', {
             user: settings.userId,
             when: when

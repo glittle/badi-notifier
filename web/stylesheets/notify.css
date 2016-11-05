@@ -17,6 +17,31 @@ ul.when {
 .whenResult {
   display: none;
 }
-#btnGetLocation2 {
+button.small {
   font-size: .6em;
+}
+.main-content h3 {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+fieldset {
+  margin-top: 1em;
+}
+#whenList > div {
+  position: relative;
+}
+#whenList > div:hover {
+  background-color: #f9f9f9;
+}
+.removeWhen {
+  font-size: 6px;
+  position: absolute;
+  right: 5px;
+  bottom: 4px;
+}
+.when_sunrise {
+  color: orangered;
+}
+.when_sunset {
+  color: darkblue;
 }

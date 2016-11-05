@@ -51,12 +51,12 @@ function getTime(body) {
 function setWhen(body) {
     // console.log(body);
     if (!body.user) {
-        return false;
+        return { saved: false };
     }
 
     var user = _users[body.user];
     if (!user) {
-        user = _users[body.user] = {
+        _users[body.user] = user = {
             id: body.user,
             tags: {
                 when: body.when
@@ -67,6 +67,9 @@ function setWhen(body) {
     }
 
     addAllReminderTriggersForUser(user.id);
+
+    console.log('Triggers loaded:')
+    console.log(_triggers);
 
     return {
         saved: true,
@@ -135,8 +138,8 @@ function sendNotification(data) {
         console.log(e);
     });
 
-    console.log('sending:');
-    console.log(data);
+    // console.log('sending:');
+    // console.log(data);
 
     req.write(JSON.stringify(data));
     req.end();
@@ -149,10 +152,11 @@ function sendNotification(data) {
 
 // For this user, add any reminders in the next 24 hours
 function addAllReminderTriggersForUser(id) {
-    //TODO
     var profile = _users[id];
     console.log('add all triggers for user ' + id);
     console.log(profile);
+
+    removeAllRemindersForUser(id);
 
     var zoneName = profile.tags.zoneName;
 
@@ -176,12 +180,18 @@ function addAllReminderTriggersForUser(id) {
         }
         var when;
         console.log('processing ' + trigger);
-        switch (trigger) {
+        var parts = trigger.split('@');
+        var triggerType = parts[0];
+        var triggerOffset = 0;
+        if (parts.length === 2) {
+            triggerOffset = +parts[1] - 30;
+        }
+        switch (triggerType) {
             case 'sunrise':
             case 'sunset':
-                when = determineSunTriggerTime(trigger, nowTz, noonTz, tomorrowNoonTz, profile);
+                when = determineSunTriggerTime(triggerType, triggerOffset, nowTz, noonTz, tomorrowNoonTz, profile);
                 if (!when) {
-                    console.log(`invalid trigger: ${trigger} for ${id}`);
+                    console.log(`invalid trigger: ${triggerType} for ${id}`);
                     continue;
                 }
                 break;
@@ -197,14 +207,65 @@ function addAllReminderTriggersForUser(id) {
                 }
                 break;
         }
-        var triggersAtThisTime = _triggers[when];
-        if (!triggersAtThisTime) {
-            _triggers[when] = triggersAtThisTime = [];
-        }
-        triggersAtThisTime.push({ id: id, trigger: trigger });
+        addTrigger(when, { id: id, trigger: trigger });
     }
 }
-function determineSunTriggerTime(triggerName, nowTz, noonTz, tomorrowNoonTz, profile) {
+
+function addTrigger(when, info) {
+    var triggersAtThisTime = _triggers[when];
+    if (!triggersAtThisTime) {
+        _triggers[when] = triggersAtThisTime = [];
+    }
+    triggersAtThisTime.push(info);
+}
+
+function removeAllRemindersForUser(id) {
+    for (var time in _triggers) {
+        if (_triggers.hasOwnProperty(time)) {
+            var triggersAtThisTime = _triggers[time];
+            for (var i = 0; i < triggersAtThisTime.length; i++) {
+                if (triggersAtThisTime[i].id === id) {
+                    triggersAtThisTime.splice(i, 1);
+                    i--;
+                    console.log('removed at ' + time);
+                }
+            }
+            if(!triggersAtThisTime.length){
+                delete _triggers[time];
+            }
+        }
+    }
+}
+
+function addNextSunTriggerFor(info) {
+    // used after a sun event to reset for the next one
+    var profile = _users[info.id];
+    var zoneName = profile.tags.zoneName;
+
+    console.log(`Adding trigger for ${info.id} at ${info.trigger}`);
+
+    // needs to be at least one minute in the future!
+    var nowTz = moment.tz(zoneName).add(1, 'minutes');
+    var noonTz = moment(nowTz).hour(12).minute(0).second(0);
+    var tomorrowNoonTz = moment(noonTz).add(24, 'hours');
+
+    var trigger = info.trigger;
+    var parts = trigger.split('@');
+    var triggerType = parts[0];
+    var triggerOffset = 0;
+    if (parts.length === 2) {
+        triggerOffset = +parts[1] - 30;
+    }
+
+    var when = determineSunTriggerTime(triggerType, triggerOffset, nowTz, noonTz, tomorrowNoonTz, profile);
+
+    addTrigger(when, info);
+
+    console.log('Triggers loaded:')
+    console.log(_triggers);
+}
+
+function determineSunTriggerTime(triggerName, triggerOffset, nowTz, noonTz, tomorrowNoonTz, profile) {
     var zoneName = profile.tags.zoneName;
     var lat = +profile.tags.latitude;
     var lng = +profile.tags.longitude;
@@ -216,6 +277,8 @@ function determineSunTriggerTime(triggerName, nowTz, noonTz, tomorrowNoonTz, pro
         sunTimes = sunCalc.getTimes(tomorrowNoonTz, lat, lng)
         whenTz = moment.tz(sunTimes[triggerName], zoneName);
     }
+
+    whenTz.add(triggerOffset, 'minutes');
 
     var serverWhen = moment(whenTz).subtract(profile.minutesOffset, 'minutes');
     var serverWhenHHMM = serverWhen.format('HH:mm');
@@ -291,28 +354,25 @@ function doReminders() {
 
     var remindersAtWhen = _triggers[serverWhen];
     if (remindersAtWhen) {
-        for (var id in remindersAtWhen) {
-            if (remindersAtWhen.hasOwnProperty(id)) {
-                console.log('sending to ' + id);
-                var info = remindersAtWhen[id];
+        for (var i = 0; i < remindersAtWhen.length; i++) {
+            var info = remindersAtWhen[i];
+            var id = info.id;
+            console.log('sending to ' + id);
 
-                sendReminder(serverWhen, id, info);
+            sendReminder(serverWhen, info);
 
-                if (info.sunTrigger) {
+            if (info.trigger === 'sunset' || info.trigger === 'sunrise') {
+                remindersAtWhen.splice(i, 1);
 
-                    delete remindersAtWhen[id];
-                    saveNeeded = true;
-
-                    setTimeout(function (idToProcess) {
-                        processSuntimes(idToProcess);
-                    }, 4 * 60 * 1000, id); // four minutes... sunset may move by a few minutes between days...
-                }
+                setTimeout(function (info2) {
+                    addNextSunTriggerFor(info2);
+                }, 5 * 60 * 1000, info); // wait five minutes... sunset may move by a few minutes between days...
             }
         }
     }
 }
 
-function processReminders(currentId, answers, deleteReminders) {
+function OLD_processReminders(currentId, answers, deleteReminders) {
     var num = 0;
 
     // reminders are shared... storage is not multi-user, so use it for very short times!
@@ -356,23 +416,24 @@ function processReminders(currentId, answers, deleteReminders) {
     return num;
 }
 
-function sendReminder(serverWhen, id) {
+function sendReminder(serverWhen, info) {
     //DONE
-    console.log(`Sending ${serverWhen} to ${id}`);
+    console.log(`Sending notification for ${serverWhen} to ${info.id}`);
 
-    var profile = _users(id);
+    var profile = _users[info.id];
 
     var dateInfo = badiCalc.getDateMessage(profile);
+
     var message = {
         app_id: appId,
-        headers: {
+        headings: {
             "en": dateInfo.title
         },
         contents: {
             "en": dateInfo.text
         },
         url: 'https://wondrous-badi.herokuapp.com/verse',
-        include_player_ids: [user]
+        include_player_ids: [info.id]
     };
     sendNotification(message);
 
@@ -536,6 +597,8 @@ function setupSchedulesForAllUsers() {
     }
     console.log('Triggers loaded:')
     console.log(_triggers);
+
+    startReminderTimer();
 }
 
 function convertTags(rawTagString) {
@@ -551,7 +614,7 @@ function getWhenFor(id) {
     return null;
 }
 
-function prepareReminderTimer() {
+function startReminderTimer() {
 
     if (manuallyStopped) {
         return;
@@ -573,5 +636,4 @@ module.exports = {
 };
 
 retrieveKnownUsers();
-prepareReminderTimer();
 
