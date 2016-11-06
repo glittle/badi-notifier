@@ -980,22 +980,28 @@ TtsPlayer.prototype.forceVoice = function (voice) {
         }
 
         function playFromBeginning() {
-            return talkifyHttp.get("/api/Language?text=" + playlist.refrenceText)
-                .then(function (error, data) {
-                    if (error) {
-                        playlist.referenceLanguage = { Culture: '', Language: -1 };
-                        player.withReferenceLanguage({ Culture: '', Language: -1 });
+            // GLEN - remove call to non-https api
+            playlist.referenceLanguage = { Culture: '', Language: -1 };
+            player.withReferenceLanguage({ Culture: '', Language: -1 });
 
-                        continueWithNext(playlist.queue[0]);
+            continueWithNext(playlist.queue[0]);
 
-                        return;
-                    }
+            // return talkifyHttp.get("/api/Language?text=" + playlist.refrenceText)
+            //     .then(function (error, data) {
+            //         if (error) {
+            //             playlist.referenceLanguage = { Culture: '', Language: -1 };
+            //             player.withReferenceLanguage({ Culture: '', Language: -1 });
 
-                    playlist.referenceLanguage = data;
-                    player.withReferenceLanguage(data);
+            //             continueWithNext(playlist.queue[0]);
 
-                    continueWithNext(playlist.queue[0]);
-                });
+            //             return;
+            //         }
+
+            //         playlist.referenceLanguage = data;
+            //         player.withReferenceLanguage(data);
+
+            //         continueWithNext(playlist.queue[0]);
+            //     });
         }
 
         function playNext() {

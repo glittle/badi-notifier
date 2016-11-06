@@ -11,7 +11,7 @@ var Verse = function () {
 
     function readAloud() {
         var player = new TtsPlayer()
-            .withTextHighlighting()
+            // .withTextHighlighting()
             .forceVoice('Microsoft Hazel Desktop');
 
         var talkify = new talkifyPlaylist()
