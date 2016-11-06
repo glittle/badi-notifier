@@ -25,7 +25,7 @@ function sendTest(id, msg) {
                 "en": msg || 'Test message!'
             },
             url: 'https://wondrous-badi.herokuapp.com/notify',
-            include_player_ids: [user]
+            include_player_ids: [id]
         };
         sendNotification(message);
     }
