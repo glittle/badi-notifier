@@ -12,6 +12,10 @@ var _rawUserList = [];
 var _users = {}; //keyed by id
 var _triggers = {}; //keyed by HH:mm
 
+var _lastKeepAliveCall = new Date();
+var _keepAliveMinutes = 27;
+var _keepAliveUrl = "https://wondrous-badi.herokuapp.com/keepAlive";
+
 var manuallyStopped = false;
 var reminderInterval = null;
 
@@ -157,6 +161,12 @@ function sendNotification(data) {
 // For this user, add any reminders in the next 24 hours
 function addAllReminderTriggersForUser(id) {
     var profile = _users[id];
+
+    if (!profile.tags.zoneName) {
+        console.log(`add all triggers for user ${id} - abort, no timezone`);
+        return;
+    }
+
     console.log(`add all triggers for user ${id} in ${profile.tags.zoneName}`);
     //console.log(profile);
 
@@ -189,6 +199,7 @@ function addAllReminderTriggersForUser(id) {
         if (parts.length === 2) {
             triggerOffset = +parts[1] - 30;
         }
+        console.log(`adding: ${triggerType} ${triggerOffset} for ${id}`);
         switch (triggerType) {
             case 'sunrise':
             case 'sunset':
@@ -373,6 +384,19 @@ function doReminders() {
                 }, 5 * 60 * 1000, info); // wait five minutes... sunset may move by a few minutes between days...
             }
         }
+    }
+
+    keepServerAlive();
+}
+
+function keepServerAlive() {
+    var now = new Date();
+    var age = now - _lastKeepAliveCall;
+    var minutes = age / 1000 / 60;
+    console.log('keep alive age: ' + minutes)
+    if (minutes > _keepAliveMinutes) {
+        console.log('calling keepAlive url')
+        https.get(_keepAliveUrl);
     }
 }
 

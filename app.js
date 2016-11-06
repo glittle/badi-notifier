@@ -962,6 +962,11 @@ app.post('/getTime', function (req, res) {
   res.send(times);
 })
 
+app.get('/keepAlive', function (req, res) {
+  res.send('hello');
+})
+
+
 app.use('/', routes);
 
 if (app.get('env') == 'development') {
