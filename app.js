@@ -933,7 +933,10 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, '/views')); // critical to use path.join on windows
 app.set('view engine', 'vash');
 app.use(favicon(__dirname + '/web/favicon.ico'));
-app.use(logger('dev'));
+
+app.use(express.static(path.join(__dirname, 'web')));
+
+app.use(logger(process.env.LOGFORMAT || ''));
 app.use(methodOverride());
 // app.use(session({ resave: true,
 //                   saveUninitialized: true,
@@ -942,7 +945,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(multer());
 
-app.use(express.static(path.join(__dirname, 'web')));
 
 
 app.post('/test', function (req, res) {
