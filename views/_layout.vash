@@ -31,11 +31,12 @@
         <!--<a href="listing" class="btn">Feasts &amp; Holy Days</a>-->
         <a href="notify" class="btn">Daily Notifications</a>
         <a href="verse" class="btn">Daily Verse</a>
+        <a href="listing" class="btn">Special Dates</a>
 
         <footer class="site-footer">
             @html.block('footer')
 
-            <span class="site-footer-owner"><a href="https://https://wondrous-badi.herokuapp.com/">The Wondrous Calendar Site</a>
+            <span class="site-footer-owner"><a href="https://https://wondrous-badi.herokuapp.com/">The Wondrous (Badí') Calendar Website</a>
             @process.env.HEROKU_RELEASE_VERSION is 
             created and maintained by <a href="https://github.com/glittle">Glen Little</a>.</span>
             @html.block('footer2')

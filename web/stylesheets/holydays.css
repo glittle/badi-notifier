@@ -11,7 +11,6 @@
 span.tip {
   font-size: 80%;
   margin-left: 3em;
-  font-style: italic;
 }
 .Clear {
   clear: left;
@@ -57,13 +56,26 @@ span.tip {
   display: inline;
   vertical-align: middle;
 }
+.WantWhat {
+  clear: both;
+  padding: 16px 0 3px 0;
+}
+.WantWhat span {
+  padding: 3px 9px;
+  border-radius: 3px;
+}
 /* table */
 table#List {
   background-color: #DED6D4;
   padding-bottom: 1px;
   width: 100%;
+  overflow: visible;
   border-collapse: collapse;
   border-radius: 10px;
+  font-size: 13px;
+}
+#CalHead {
+  font-size: 14px;
 }
 #List td,
 #List th {
@@ -74,13 +86,9 @@ table#List {
 }
 #List th.Gregorian {
   font-weight: normal;
-  font-style: italic;
 }
 #List td.FastTimes {
   white-space: nowrap;
-}
-td.blank {
-  background-color: #f9f7f5;
 }
 td.ForFeast,
 td.ForStartTime,
@@ -122,7 +130,6 @@ tr#NoSelection {
   background: #fee;
 }
 tr#NoSelection td {
-  font-style: italic;
   text-align: center;
   padding-right: 300px;
 }
@@ -131,7 +138,7 @@ tr#NoSelection td {
 }
 td.Feast,
 tr.Feast,
-select.Feast {
+span.Feast {
   background-color: #E7E1DE;
 }
 td.Feast:hover,
@@ -175,7 +182,6 @@ tr.NotDefined {
 #List tr.NotDefined td {
   padding: 1em 0;
   text-align: center;
-  font-style: italic;
 }
 td.Time,
 th.Time {
@@ -193,13 +199,13 @@ td.Name2 {
   color: #bbb;
   display: none;
 }
-#content.ShowEve .eveInfo {
+.main-content.ShowEve .eveInfo {
   display: inline;
 }
-#content.ShowToday td.Today {
+.main-content.ShowToday td.Today {
   display: table-cell;
 }
-#content.ShowToday tr.Today {
+.main-content.ShowToday tr.Today {
   display: table-row;
 }
 label[for=ShowToday] {
@@ -213,24 +219,22 @@ label[for=ShowToday] {
   display: none;
   text-align: center;
 }
-#content.ShowSunset span.Sunrise {
+.main-content.ShowSunset span.Sunrise {
   display: inline;
 }
-#content.ShowSunset th.Sunset,
-#content.ShowSunset td.Sunset {
+.main-content.ShowSunset th.Sunset,
+.main-content.ShowSunset td.Sunset {
   display: table-cell;
 }
 div.Sunset {
   display: none;
   line-height: normal;
-  font-style: italic;
   text-align: left;
 }
-#content.ShowSunset div.Sunset {
+.main-content.ShowSunset div.Sunset {
   display: block;
-  margin-left: 10px:;
 }
-#content.ShowSunset span.Sunset {
+.main-content.ShowSunset span.Sunset {
   display: inline;
 }
 .help {
@@ -251,32 +255,38 @@ div.Sunset {
 }
 #latLongName {
   text-align: left;
-  font-style: italic;
+}
+#btnToday {
+  font-size: 90%;
+  padding: 0 4px 0 2px;
 }
 .LatLong button {
   font-size: 90%;
-  padding: 0;
-  margin: 0 1px 0 1px;
+  padding: 0 4px 0 2px;
+  margin: 0 1px 0 3px;
 }
 .LatLong .Sunset {
-  margin-left: 19px;
+  margin-left: 40px;
 }
 .LatLong .Indent {
-  margin-left: 19px;
-}
-select#StartTime {
-  font-style: italic;
+  margin-left: 40px;
 }
 p.footer {
   margin-top: 15px;
-  text-align: right;
-  font-style: italic;
+  font-size: 80%;
 }
 #printBtnArea {
   float: right;
 }
 #printBtnArea button {
   font-size: 90%;
+}
+.main-content table th,
+.main-content table td {
+  text-align: left;
+}
+.project-name {
+  cursor: pointer;
 }
 /*
 .Selectors{
@@ -287,11 +297,9 @@ padding: 2px 6px 2px 1px;
 }
 */
 @media print {
-  #header,
-  #footer,
-  h2,
-  #thisismyurl_slideshow,
-  .skip-content {
+  .page-header,
+  .footer,
+  #CalHead {
     display: none;
   }
 }

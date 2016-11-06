@@ -1,19 +1,20 @@
 @html.extend('_layout', function(model){ 
+@html.block('header', function (model){
+<h2>Bahá'í Feast &amp; Holy Days</h2>
+});
+
 @html.block('content', function(model){
         
-<h3>Feasts &amp; Holy Days</h3>
-<p>The Baha'i Faith has a number of special days each year, scheduled using the Wondrous (Badí') Calendar.</p>
-
 <div id="CalHead"></div>
 <div class="List"></div>
 
-});
+})
 
 @html.block('scripts', function (model){
 <script src="js/holydays.js"></script> 
-});
+})
 
 @html.block('head', function(model){
 <link rel="stylesheet" type="text/css" href="stylesheets/holydays.css"> 
-});
-});
+})
+})

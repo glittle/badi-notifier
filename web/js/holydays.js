@@ -39,19 +39,16 @@ var HolyDays = function () {
     } catch (e) { }
     var html =
       '<div class="SelectorArea">'
+      + "<p>The Baha'i Faith schedules its special dates according to the Wondrous (Badí') Calendar.</p>"
       + '<div class="Selectors">'
-      + '<div class="YearSelect">Year: <select accesskey=Y id="DesiredYear"></select></div>'
-      + '<div id=yearComment1 class="Hidden YearComment">* Naw Rúz in year <span class=bYear></span> falls on March ' + (19 + '/').eveInfo() + '20.</div>'
-      + '<div id=yearComment2 class="Hidden YearComment">** Naw Rúz in year <span class=bYear></span> falls on March ' + (18 + '/').eveInfo() + '19.</div>'
-      + '<div></div>'
-      + '<span class="HolyDayHS"><input id="WantHolyDay" type="checkbox" accesskey="H" /><label for="WantHolyDay"> Holy Days</label></span>'
-      + '<span class="Feast"><input id="WantFeast" type="checkbox" accesskey="M" /><label for="WantFeast"> Months/Feasts</label></span>'
-      + '<span class="OtherDay"><input id="WantOther" type="checkbox" accesskey="O" /><label for="WantOther"> Other Events</label></span>'
-      + '<span class="Fast"><input id="WantFast" type="checkbox" accesskey="F" /><label for="WantFast"> Fast Days</label></span>'
+      + ' <div class="YearSelect">Year: <select accesskey=Y id="DesiredYear"></select></div>'
+      + ' <div id=yearComment1 class="Hidden YearComment">* Naw Rúz in year <span class=bYear></span> falls on March ' + (19 + '/').eveInfo() + '20.</div>'
+      + ' <div id=yearComment2 class="Hidden YearComment">** Naw Rúz in year <span class=bYear></span> falls on March ' + (18 + '/').eveInfo() + '19.</div>'
+      + ' <div></div>'
       + '</div>'
       + '</div>'
       + '<div class=SelectorOptions>'
-      + '<span><input id="ShowToday" type="checkbox" accesskey="T" /><label for="ShowToday"><i> Show Today</i></label> <span class="help" title="Only shows in the current year."></span> <span class="tip">Hover over each <span class="help" title="This is a tip!"></span> for useful information!</span> </span>'
+      + '<span><input id="ShowToday" type="checkbox" accesskey="T" /><label for="ShowToday"><i> Show Today</i></label> <span class="help" title="Only shows in the current year."></span> <button type="button" id="btnToday">Go to Today</button> <span class="tip">Hover over each <span class="help" title="This is a tip!"></span> for useful information!</span> </span>'
       + '<span><input id="ShowEve" type="checkbox" accesskey="E" /><label for="ShowEve"><i> Show Eve Dates</i></label> <span class="help" title="Days in the Wondrous calendar start at sunset on the eve (before) the main part of the day."></span></span>'
       + '<span class=LatLong><input id="ShowSunset" type="checkbox" accesskey="U" /><label for="ShowSunset"><i> Show Local Sunset Times</i></label>'
       + '<div class=Sunset><i>This computer is currently in the ' + timeZoneName + '.</i> <span class="help" title="Tip: You computer\'s clock is used to determine daylight savings start and end times throughout the year."></span></div>'
@@ -59,7 +56,14 @@ var HolyDays = function () {
       + '<button type=button id=getLocation>Learn for my location</button> <span class="help" title="Tip: if clicking the button fails, you could find your location in Google Maps, then\ncopy the Latitude and Longitude numbers from the URL address after the @."></span></div>'
       + '<span title="Nearest location" class=Sunset id=latLongName></span>'
       + '</span>'
+      + '<div class="WantWhat">'
+      + ' <span class="HolyDayHS"><input id="WantHolyDay" type="checkbox" accesskey="H" /><label for="WantHolyDay"> Holy Days</label></span>'
+      + ' <span class="Feast"><input id="WantFeast" type="checkbox" accesskey="M" /><label for="WantFeast"> Months/Feasts</label></span>'
+      + ' <span class="OtherDay"><input id="WantOther" type="checkbox" accesskey="O" /><label for="WantOther"> Other Events</label></span>'
+      + ' <span class="Fast"><input id="WantFast" type="checkbox" accesskey="F" /><label for="WantFast"> Fast Days</label></span>'
+
       + '<span id=printBtnArea><button type=button onclick="print()">Print</button></span>'
+      + '</div>'
       + '<div class=Clear></div>'
       + '</div>'
       + '<div class=Clear></div>';
@@ -85,7 +89,7 @@ var HolyDays = function () {
       + '</tr>'
       + '</thead><tbody>'
       + '</tbody></table>'
-      + '<p class=footer>Last modified on 7 Bahá (Splendor) 172.</p>'
+      + '<p class=footer>Code last updated on 4 Power (Qudrat) 173 - Nov 5/6, 2016.</p>'
     );
   }
 
@@ -103,7 +107,7 @@ var HolyDays = function () {
       .toggleClass('ShowFast', wantFast)
       .toggleClass('NoSelection', !(wantFeast || wantFast || wantHolyDay || wantOther));
 
-    $('#content')
+    $('.main-content')
       .toggleClass('ShowToday', $('#ShowToday').prop('checked'))
       .toggleClass('ShowEve', $('#ShowEve').prop('checked'))
       .toggleClass('ShowSunset', $('#ShowSunset').prop('checked'))
@@ -148,9 +152,19 @@ var HolyDays = function () {
       .click(function () { ApplyFilters(); localStorage.ShowSunset = $(this).prop('checked'); })
       .prop('checked', localStorage.ShowSunset == 'true');
 
+    $('#btnToday')
+      .click(function () {
+        ddlYear.val(_now.getBadiYear()).trigger('change');
+      });
+
+    $('.project-name').click(function () { location.href = '/'; });
+    
     var ddlYear = $('#DesiredYear');
     ddlYear
-      .change(function () { showDatesInYear($('.List'), ddlYear.val()); localStorage.Year = ddlYear.val(); })
+      .change(function () {
+        showDatesInYear($('.List'), ddlYear.val());
+        localStorage.Year = ddlYear.val();
+      })
       .val(localStorage.Year || _now.getBadiYear());
     if (!ddlYear.val()) {
       ddlYear.val(_now.getBadiYear());
@@ -169,9 +183,9 @@ var HolyDays = function () {
 
     $('#long').change(function (ev) {
       _locationLong = +ev.target.value;
-      localStorage.long = _locationLong;
+      localStorage.lng = _locationLong;
       showLocation();
-    }).val(_locationLong = +localStorage.long || 0);
+    }).val(_locationLong = +localStorage.lng || 0);
 
     showLocation();
 
@@ -180,7 +194,7 @@ var HolyDays = function () {
         navigator.geolocation.getCurrentPosition
         navigator.geolocation.getCurrentPosition(function (loc) {
           $('#lat').val(localStorage.lat = _locationLat = loc.coords.latitude);
-          $('#long').val(localStorage.long = _locationLong = loc.coords.longitude);
+          $('#long').val(localStorage.lng = _locationLong = loc.coords.longitude);
           showLocation();
           $('#DesiredYear').trigger('change');
         })
@@ -503,9 +517,9 @@ var HolyDays = function () {
           + '<td class=NameLong>' + otherRangeName + '</td>'
           + '<td>' + ShortBadi(dateInfo.BMonthDay) + ' - ' + (dateInfo.BMonthDay.m == dateInfo.BMonthDayTo.m ? dateInfo.BMonthDayTo.d : ShortBadi(dateInfo.BMonthDayTo)) + '</td>'
           + '<td class=Sunset></td>'
-          + '<td>' + dateInfo.GDate.getDayNames() + ' - ' + dateInfo.GDateTo.getDayNames() + '</td>'
+          + '<td>' + dateInfo.GDate.getDayNames() + '<br> - ' + dateInfo.GDateTo.getDayNames() + '</td>'
           // all date ranges are in same gYear, so don't need to check 
-          + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + ' - ' + ShortGregDate(dateInfo.GDateTo) + ', ' + dateInfo.gYear + '</td>'
+          + '<td class=SpecificDay>' + ShortGregDate(dateInfo.GDate) + '<br> - ' + ShortGregDate(dateInfo.GDateTo) + ', ' + dateInfo.gYear + '</td>'
           + '<td class=ForFeast></td>'
           //+ '<td class=FromTo>' + ShortGregDate(dateInfo.GDate) + ' - ' + ShortGregDate(dateInfo.GDateTo) + '</td>'
           + '</tr>'
@@ -1139,7 +1153,7 @@ var HolyDays = function () {
 }
 
 var holyDays = new HolyDays();
-jQuery(document).ready(function () {
+$(function () {
   holyDays.startup();
 });
 
