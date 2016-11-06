@@ -176,16 +176,16 @@ function addAllReminderTriggersForUser(id) {
 
     // needs to be at least one minute in the future!
     var nowTz = moment.tz(zoneName).add(1, 'minutes');
-console.log(`user now: ${nowTz.format()}`);    
+    // console.log(`user now: ${nowTz.format()}`);    
     var noonTz = moment(nowTz).hour(12).minute(0).second(0);
     var tomorrowNoonTz = moment(noonTz).add(24, 'hours');
 
     var serverNow = moment().add(1, 'minutes');
-console.log(`server now: ${new Date()}`);    
-console.log(`server now: ${serverNow.format()}`);    
-console.log(`server tz: ${moment.tz.guess()}`);    
+    // console.log(`server now: ${new Date()}`);    
+    // console.log(`server now: ${serverNow.format()}`);    
+    // console.log(`server tz: ${moment.tz.guess()}`);    
     var minutesFromUserToServer = serverNow.diff(nowTz, 'minutes');
-console.log(`minutes from user to server: ${minutesFromUserToServer}`);
+    // console.log(`minutes from user to server: ${minutesFromUserToServer}`);
     // save for later
     profile.minutesOffset = minutesFromUserToServer;
 
@@ -224,13 +224,12 @@ console.log(`minutes from user to server: ${minutesFromUserToServer}`);
                 }
                 break;
         }
-        console.log(`adding ${triggerType} ${triggerOffset} for ${id} at ${when}`);
         addTrigger(when, { id: id, trigger: trigger });
     }
 }
 
 function addTrigger(when, info) {
-    // console.log(`add trigger at ${when} for ${info.trigger}`);
+    console.log(`add trigger at ${when} for ${info.trigger}`);
     var triggersAtThisTime = _triggers[when];
     if (!triggersAtThisTime) {
         _triggers[when] = triggersAtThisTime = [];
@@ -282,6 +281,17 @@ function addNextSunTriggerFor(info) {
 
     console.log('Triggers loaded:')
     console.log(_triggers);
+}
+
+function dumpInfo() {
+    console.log('------------------- DUMP 1 ------------------------------');
+    console.log('Users:');
+    console.log(_users);
+
+    console.log('Triggers loaded:')
+    console.log(_triggers);
+    console.log('------------------- END DUMP 1 --------------------------');
+
 }
 
 function determineSunTriggerTime(triggerName, triggerOffset, nowTz, noonTz, tomorrowNoonTz, profile) {
@@ -672,7 +682,8 @@ module.exports = {
     sendTest: sendTest,
     setWhen: setWhen,
     getTime: getTime,
-    getWhenFor: getWhenFor
+    getWhenFor: getWhenFor,
+    dumpInfo: dumpInfo
 };
 
 retrieveKnownUsers();

@@ -935,7 +935,6 @@ app.set('view engine', 'vash');
 app.use(favicon(__dirname + '/web/favicon.ico'));
 
 app.use(express.static(path.join(__dirname, 'web')));
-
 app.use(logger(process.env.LOGFORMAT || ''));
 app.use(methodOverride());
 // app.use(session({ resave: true,
@@ -965,7 +964,11 @@ app.post('/getTime', function (req, res) {
 })
 
 app.get('/keepAlive', function (req, res) {
-  res.send('hello');
+  res.send('done');
+})
+app.get('/dump1', function (req, res) {
+  notifications.dumpInfo();
+  res.send('done');
 })
 
 
