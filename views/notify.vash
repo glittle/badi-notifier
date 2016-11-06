@@ -1,8 +1,12 @@
 @html.extend('_layout', function(model){ 
+
+@html.block('header', function (model){
+    <h2>Daily Notifications</h2>
+});
+
 @html.block('content', function(model){
 
 <div class="supported">
-    <h2>Notifications</h2>
     <p>The computer or device you are using at the moment can receive notifications from this web
         site, telling you the current day is in the Wondrous (Badí') Calendar. Follow the steps
         below to add some notifications!</p>
@@ -12,7 +16,7 @@
     <p class="step2_">&#10144; Checking notification status...</p>
     <p class="step2 step2_false">&#10144; Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
     <p class="step2 step2_true">&#10004; You have enabled notifications on this device.</p>
-    <blockquote class="step2 step2_true"><button class="testNow">Send notification now!</button></blockquote>
+    <blockquote class="step2 step2_true"><button class="testNow">Send a notification now!</button></blockquote>
 
     <p class="step1_">&#10144; Checking location status...</p>
     <p class="step1 step1_false">&#10144; Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>

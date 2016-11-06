@@ -1,6 +1,6 @@
 .verse {
   font-size: 2em;
-  padding: 1em;
+  padding: .5em;
   font-family: 'Gentium Book Basic', cursive;
   line-height: 1.2;
 }
@@ -8,6 +8,17 @@
   font-size: .5em;
   white-space: nowrap;
 }
-.prefix {
-  text-align: center;
+.talkify-word-highlight {
+  border-bottom: 1px solid #bd2c00;
+  color: #bd2c00;
+}
+.main-content p {
+  margin-bottom: .5em;
+}
+#btnRead {
+  margin-left: 1em;
+}
+#talkify-audio {
+  display: block;
+  margin: 6px 0 0 1em;
 }

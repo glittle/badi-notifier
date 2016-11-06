@@ -354,7 +354,7 @@ function OLD_determineSunTriggerTime(which, nowTz, noonTz, tomorrowNoonTz, idToP
 function doReminders() {
 
     var serverWhen = moment().format('HH:mm');
-    console.log(`\rChecking reminders for ${serverWhen} (server time)`)
+    console.log(`Checking reminders for ${serverWhen} (server time)`)
 
     var remindersAtWhen = _triggers[serverWhen];
     if (remindersAtWhen) {
@@ -423,6 +423,13 @@ function OLD_processReminders(currentId, answers, deleteReminders) {
 function sendReminder(id) {
     //DONE
     console.log(`Sending notification to ${id}`);
+
+    if (process.env.TESTONLY) {
+        if (process.env.TESTONLY !== id) {
+            console.log('--abort: in test environment');
+            return;
+        }
+    }
 
     var profile = _users[id];
 

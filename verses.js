@@ -8,7 +8,7 @@ var verses = {};
 function getVerse() {
     if (!verses) {
         console.log('verses not loaded');
-        return {verse: 'not loaded...'};
+        return { verse: 'not loaded...' };
     }
 
     var hour;
@@ -17,6 +17,8 @@ function getVerse() {
     var answers = [];
 
     var profile = {};//TEMP
+
+    //TODO: NOT specific to user...
 
     if (profile.tzInfo) {
         var zoneName = profile.tzInfo.zoneName;
@@ -37,14 +39,14 @@ function getVerse() {
         var verseInfo = dayVerses[isAm ? 'am' : 'pm'];
         if (verseInfo) {
             var v = {
-                prefix: `A selection from "Reciting the Verses of God" ${timeOfDay}:`,
+                prefix: `A selection from "Reciting the Verses of God" ${timeOfDay}`,
                 suffix: `(Bahá'u'lláh, ${verseInfo.r})`,
                 verse: verseInfo.q
             };
             return v;
         }
     }
-    return {verse: '???'};
+    return { verse: '???' };
 }
 
 function loadVersesAsync(cb) {
@@ -61,7 +63,6 @@ function loadVersesAsync(cb) {
         }
     });
 }
-
 
 
 loadVersesAsync();

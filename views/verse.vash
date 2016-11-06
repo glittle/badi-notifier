@@ -5,19 +5,27 @@
 }
     
 @html.block('header', function (model){
-    <div class="prefix">@v.prefix</div>
+    <h2>@v.prefix</h2>
 });
  
 @html.block('content', function(model){
 
-<p class="verse">@v.verse
+<p class="verse">
+  <span class="verseText">@v.verse</span>
   <span class="suffix">@v.suffix</span>
 </p>
+<button type="button" id="btnRead">Read Aloud</button>
 
 });
 
 @html.block('scripts', function (model){
   <script src="js/verse.js"></script>
+  <script src='js/talkify.js'></script>
+});
+
+@html.block('footer2', function (model){
+<span class="site-footer-owner">Reading system provided by <a href="https://github.com/Hagsten/Talkify">Talkify</a>.</span>
+
 });
 
 @html.block('head', function(model){

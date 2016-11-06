@@ -37,6 +37,7 @@
 
             <span class="site-footer-owner"><a href="https://https://wondrous-badi.herokuapp.com/">The Wondrous Calendar Site</a> is 
             created and maintained by <a href="https://github.com/glittle">Glen Little</a>.</span>
+            @html.block('footer2')
         </footer>
 
     </section>
