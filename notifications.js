@@ -185,7 +185,7 @@ console.log(`server now: ${new Date()}`);
 console.log(`server now: ${serverNow.format()}`);    
 console.log(`server tz: ${moment.tz.guess()}`);    
     var minutesFromUserToServer = serverNow.diff(nowTz, 'minutes');
-
+console.log(`minutes from user to server: ${minutesFromUserToServer}`);
     // save for later
     profile.minutesOffset = minutesFromUserToServer;
 
