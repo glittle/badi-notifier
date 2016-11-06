@@ -157,8 +157,8 @@ function sendNotification(data) {
 // For this user, add any reminders in the next 24 hours
 function addAllReminderTriggersForUser(id) {
     var profile = _users[id];
-    console.log('add all triggers for user ' + id);
-    console.log(profile);
+    console.log(`add all triggers for user ${id} in ${profile.tags.zoneName}`);
+    //console.log(profile);
 
     removeAllRemindersForUser(id);
 
@@ -183,7 +183,6 @@ function addAllReminderTriggersForUser(id) {
             continue;
         }
         var when;
-        console.log('processing ' + trigger);
         var parts = trigger.split('@');
         var triggerType = parts[0];
         var triggerOffset = 0;
@@ -216,6 +215,7 @@ function addAllReminderTriggersForUser(id) {
 }
 
 function addTrigger(when, info) {
+    console.log(`add trigger at ${when} for ${info.trigger}`);
     var triggersAtThisTime = _triggers[when];
     if (!triggersAtThisTime) {
         _triggers[when] = triggersAtThisTime = [];
