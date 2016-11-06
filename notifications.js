@@ -397,6 +397,7 @@ function keepServerAlive() {
     if (minutes > _keepAliveMinutes) {
         console.log('calling keepAlive url')
         https.get(_keepAliveUrl);
+        _lastKeepAliveCall = now;
     }
 }
 
