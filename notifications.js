@@ -181,7 +181,9 @@ console.log(`user now: ${nowTz.format()}`);
     var tomorrowNoonTz = moment(noonTz).add(24, 'hours');
 
     var serverNow = moment().add(1, 'minutes');
+console.log(`server now: ${new Date()}`);    
 console.log(`server now: ${serverNow.format()}`);    
+console.log(`server tz: ${moment.tz.guess()}`);    
     var minutesFromUserToServer = serverNow.diff(nowTz, 'minutes');
 
     // save for later
