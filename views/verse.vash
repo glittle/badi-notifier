@@ -1,11 +1,15 @@
-@html.extend('_layout', function(model){ 
-@html.block('content', function(model){
+@html.extend('_layout', function(model){
 
 @{ 
     var v = model.getVerse();
 }
+    
+@html.block('header', function (model){
+    <div class="prefix">@v.prefix</div>
+});
+ 
+@html.block('content', function(model){
 
-<h3 class="prefix">@v.prefix</h3>
 <p class="verse">@v.verse
   <span class="suffix">@v.suffix</span>
 </p>
@@ -17,6 +21,7 @@
 });
 
 @html.block('head', function(model){
+  <link href="https://fonts.googleapis.com/css?family=Gentium+Book+Basic:400i" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="stylesheets/verse.css">
 })
 })

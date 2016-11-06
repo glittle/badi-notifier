@@ -5,14 +5,14 @@
     <h2>Notifications</h2>
     <p>The computer or device you are using at the moment can receive notifications from this web
         site, telling you the current day is in the Wondrous (Badí') Calendar. Follow the steps
-        below to turn it on!</p>
+        below to add some notifications!</p>
 
     <h2>Setup</h2>
 
     <p class="step2_">&#10144; Checking notification status...</p>
     <p class="step2 step2_false">&#10144; Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
     <p class="step2 step2_true">&#10004; You have enabled notifications on this device.</p>
-    <blockquote class="step2 step2_true"><button class="testNow">Test Now!</button></blockquote>
+    <blockquote class="step2 step2_true"><button class="testNow">Send notification now!</button></blockquote>
 
     <p class="step1_">&#10144; Checking location status...</p>
     <p class="step1 step1_false">&#10144; Where are you? Click <button type="button" id="btnGetLocation">Share Location</button> to share your current location.</p>
@@ -24,7 +24,7 @@
         <h3>Your Notifications</h3>
         <div id="whenList"></div>
         <fieldset>
-            <legend>Add a new notification</legend>
+            <legend>Add a Notification</legend>
         <div id="whenSunset">Get a notification <select id="sunOffset">
             <option value="00">30 minutes before</option>
             <option value="15">15 minutes before</option>
@@ -52,7 +52,7 @@
              </div>
         <div id="whenCustom">Get a notification every day at <input type="time" id="customWhen"> <button id="addWhen">Add</button> </div>
         </fieldset>
-        <div class="whenResult whenResult_true">Saved!</div>
+        <!--<div class="whenResult whenResult_true">Saved!</div>-->
         <div class="whenResult whenResult_false">Not saved</div>
     </blockquote>
 </div>

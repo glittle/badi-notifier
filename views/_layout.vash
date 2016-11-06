@@ -17,6 +17,7 @@
     <section class="page-header">
         <h1 class="project-name">The Wondrous (Badí') Calendar</h1>
         <!--<h2 class="project-tagline">CAUTION: This site is under development as of November 2016...</h2>-->
+        @html.block('header')
     </section>
 
     <section class="main-content">

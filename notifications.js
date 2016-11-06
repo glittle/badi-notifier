@@ -15,17 +15,21 @@ var _triggers = {}; //keyed by HH:mm
 var manuallyStopped = false;
 var reminderInterval = null;
 
-function sendTest(user, msg) {
+function sendTest(id, msg) {
+    if (_users[id] && _users[id].tags && _users[id].tags.latitude) {
+        sendReminder(id);
+    } else {
+        var message = {
+            app_id: appId,
+            contents: {
+                "en": msg || 'Test message!'
+            },
+            url: 'https://wondrous-badi.herokuapp.com/notify',
+            include_player_ids: [user]
+        };
+        sendNotification(message);
+    }
 
-    var message = {
-        app_id: appId,
-        contents: {
-            "en": msg || 'Test message!'
-        },
-        url: 'https://wondrous-badi.herokuapp.com/notify',
-        include_player_ids: [user]
-    };
-    sendNotification(message);
 }
 
 function getTime(body) {
@@ -230,7 +234,7 @@ function removeAllRemindersForUser(id) {
                     console.log('removed at ' + time);
                 }
             }
-            if(!triggersAtThisTime.length){
+            if (!triggersAtThisTime.length) {
                 delete _triggers[time];
             }
         }
@@ -350,7 +354,7 @@ function OLD_determineSunTriggerTime(which, nowTz, noonTz, tomorrowNoonTz, idToP
 function doReminders() {
 
     var serverWhen = moment().format('HH:mm');
-    console.log(`Checking reminders for ${serverWhen} (server time)`)
+    console.log(`\rChecking reminders for ${serverWhen} (server time)`)
 
     var remindersAtWhen = _triggers[serverWhen];
     if (remindersAtWhen) {
@@ -359,7 +363,7 @@ function doReminders() {
             var id = info.id;
             console.log('sending to ' + id);
 
-            sendReminder(serverWhen, info);
+            sendReminder(info.id);
 
             if (info.trigger === 'sunset' || info.trigger === 'sunrise') {
                 remindersAtWhen.splice(i, 1);
@@ -416,11 +420,11 @@ function OLD_processReminders(currentId, answers, deleteReminders) {
     return num;
 }
 
-function sendReminder(serverWhen, info) {
+function sendReminder(id) {
     //DONE
-    console.log(`Sending notification for ${serverWhen} to ${info.id}`);
+    console.log(`Sending notification to ${id}`);
 
-    var profile = _users[info.id];
+    var profile = _users[id];
 
     var dateInfo = badiCalc.getDateMessage(profile);
 
@@ -433,7 +437,7 @@ function sendReminder(serverWhen, info) {
             "en": dateInfo.text
         },
         url: 'https://wondrous-badi.herokuapp.com/verse',
-        include_player_ids: [info.id]
+        include_player_ids: [id]
     };
     sendNotification(message);
 

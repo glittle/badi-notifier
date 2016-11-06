@@ -1,10 +1,11 @@
 @html.extend('_layout', function(model){ 
     @html.block('content', function(model){
 
-<h2>@model.channel</h2>
+<p>Current features of this site:</p>
 
-<h3>Welcome to the Wondrous Calendar pages at heroku!</h3>
-
-<p>This site is under development as of October 2016...</p>
+<ul>
+    <li>Daily notifications sent to you!</li>
+    <li>Daily verse from "Reciting the Verses of God"</li>
+</ul>
 
 }) })
