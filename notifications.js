@@ -14,7 +14,7 @@ var _triggers = {}; //keyed by HH:mm
 
 var _lastKeepAliveCall = new Date();
 var _keepAliveMinutes = 27;
-var _keepAliveUrl = "https://wondrous-badi.herokuapp.com/keepAlive";
+var _keepAliveUrl = process.env.BASEURL || "https://wondrous-badi.herokuapp.com/keepAlive";
 
 var manuallyStopped = false;
 var reminderInterval = null;
@@ -176,10 +176,12 @@ function addAllReminderTriggersForUser(id) {
 
     // needs to be at least one minute in the future!
     var nowTz = moment.tz(zoneName).add(1, 'minutes');
+console.log(`user now: ${nowTz.format()}`);    
     var noonTz = moment(nowTz).hour(12).minute(0).second(0);
     var tomorrowNoonTz = moment(noonTz).add(24, 'hours');
 
     var serverNow = moment().add(1, 'minutes');
+console.log(`server now: ${serverNow.format()}`);    
     var minutesFromUserToServer = serverNow.diff(nowTz, 'minutes');
 
     // save for later
@@ -199,7 +201,6 @@ function addAllReminderTriggersForUser(id) {
         if (parts.length === 2) {
             triggerOffset = +parts[1] - 30;
         }
-        console.log(`adding: ${triggerType} ${triggerOffset} for ${id}`);
         switch (triggerType) {
             case 'sunrise':
             case 'sunset':
@@ -221,12 +222,13 @@ function addAllReminderTriggersForUser(id) {
                 }
                 break;
         }
+        console.log(`adding ${triggerType} ${triggerOffset} for ${id} at ${when}`);
         addTrigger(when, { id: id, trigger: trigger });
     }
 }
 
 function addTrigger(when, info) {
-    console.log(`add trigger at ${when} for ${info.trigger}`);
+    // console.log(`add trigger at ${when} for ${info.trigger}`);
     var triggersAtThisTime = _triggers[when];
     if (!triggersAtThisTime) {
         _triggers[when] = triggersAtThisTime = [];
@@ -393,9 +395,9 @@ function keepServerAlive() {
     var now = new Date();
     var age = now - _lastKeepAliveCall;
     var minutes = age / 1000 / 60;
-    console.log('keep alive age: ' + minutes)
+    // console.log('keep alive age: ' + minutes)
     if (minutes > _keepAliveMinutes) {
-        console.log('calling keepAlive url')
+        console.log('calling keepAlive url at ' + _keepAliveUrl);
         https.get(_keepAliveUrl);
         _lastKeepAliveCall = now;
     }
