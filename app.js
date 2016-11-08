@@ -928,13 +928,26 @@ function announceTo(whoId, msg) {
 
 
 ///////
+var forceSsl = function (req, res, next) {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  }
+  return next();
+};
+
+
+if (process.env.ENVIRONMENT !== 'dev') {
+  app.use(forceSsl);
+}
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, '/views')); // critical to use path.join on windows
+
+app.use(express.static(path.join(__dirname, 'web')));
+
 app.set('view engine', 'vash');
 app.use(favicon(__dirname + '/web/favicon.ico'));
 
-app.use(express.static(path.join(__dirname, 'web')));
 app.use(logger(process.env.LOGFORMAT || ''));
 app.use(methodOverride());
 // app.use(session({ resave: true,
