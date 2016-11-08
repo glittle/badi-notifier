@@ -286,6 +286,10 @@ function addNextSunTriggerFor(info) {
 
 function dumpInfo() {
     console.log('------------------- DUMP 1 ------------------------------');
+    console.log('Server time: ')
+    console.log(moment().format());
+    console.log(new Date());
+
     console.log('Users:');
     console.log(_users);
 
