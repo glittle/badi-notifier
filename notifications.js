@@ -175,18 +175,14 @@ function addAllReminderTriggersForUser(id) {
 
     var zoneName = profile.tags.zoneName;
 
-    // needs to be at least one minute in the future!
+    // OLD needs to be at least one minute in the future!
     var nowTz = moment.tz(zoneName).add(1, 'minutes');
+    var serverNow = moment().add(1, 'minutes');
     // console.log(`user now: ${nowTz.format()}`);    
     var noonTz = moment(nowTz).hour(12).minute(0).second(0);
     var tomorrowNoonTz = moment(noonTz).add(24, 'hours');
 
-    var serverNow = moment().add(1, 'minutes');
-    // console.log(`server now: ${new Date()}`);    
-    // console.log(`server now: ${serverNow.format()}`);    
-    // console.log(`server tz: ${moment.tz.guess()}`);    
     var minutesFromUserToServer = serverNow.diff(nowTz, 'minutes');
-    // console.log(`minutes from user to server: ${minutesFromUserToServer}`);
     // save for later
     profile.minutesOffset = minutesFromUserToServer;
 
@@ -215,10 +211,13 @@ function addAllReminderTriggersForUser(id) {
                 break;
             default:
                 // should be hh:mm
-                var userTime = moment(trigger, 'H:mm');
-
-                if (userTime.isValid()) {
-                    when = userTime.subtract(minutesFromUserToServer, 'minutes').format('HH:mm');
+                var targetTime = moment(trigger, 'H:mm');
+                if (targetTime.isValid()) {
+                    if (targetTime.isBefore(serverNow, 'minute')) {
+                        targetTime.add(24, 'hours');
+                    }
+                    when = moment(serverNow)
+                            .add(1 + targetTime.diff(serverNow, 'minute'), 'minute').format('HH:mm');
                 } else {
                     console.log(`invalid time: ${trigger} for ${id}`);
                     continue;
@@ -589,7 +588,7 @@ function processCsv(csvFile) {
         }
         console.log(users.length + ' users defined');
         _rawUserList = users;
-        setupSchedulesForAllUsers();
+        setupTriggersForAllUsers();
     });
 }
 
@@ -619,7 +618,7 @@ function directlyRetrieveUserList() {
             var result = JSON.parse(binary.toString());
             console.log('receiving ' + result.total_count);
             _rawUserList = result.players;
-            setupSchedulesForAllUsers();
+            setupTriggersForAllUsers();
         });
 
 
@@ -632,7 +631,7 @@ function directlyRetrieveUserList() {
     req.end();
 }
 
-function setupSchedulesForAllUsers() {
+function setupTriggersForAllUsers() {
     var withTags = 0;
     // extract only those with tags
     for (var i = 0, m = _rawUserList.length; i < m; i++) {

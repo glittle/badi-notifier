@@ -948,7 +948,7 @@ app.use(express.static(path.join(__dirname, 'web')));
 app.set('view engine', 'vash');
 app.use(favicon(__dirname + '/web/favicon.ico'));
 
-app.use(logger(process.env.LOGFORMAT || ''));
+app.use(logger(process.env.LOGFORMAT || 'combined'));
 app.use(methodOverride());
 // app.use(session({ resave: true,
 //                   saveUninitialized: true,
