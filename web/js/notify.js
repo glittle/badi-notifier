@@ -11,9 +11,11 @@ var Notify = function () {
         OneSignal.push(function () {
             OneSignal.getTags(function (tags) {
                 settings.tags = tags;
-                console.log('got tags');
-                console.log(tags);
-                applyWhens(tags.when);
+                // console.log(tags);
+                if (tags && tags.when) {
+                    console.log('got tags');
+                    applyWhens(tags.when);
+                }
             });
             OneSignal.getUserId(function (userId, a, b) {
                 settings.userId = userId;
@@ -252,19 +254,25 @@ var Notify = function () {
             cache: true,
             success: function (data) {
                 if (data.status === 'OK') {
-                    var components = data.results[0].address_components;
-                    for (var i = 0; i < components.length; i++) {
-                        var component = components[i];
-                        //console.log(component);
-                        if ($.inArray('political', component.types) != -1) { //$.inArray('political', component.types)!=-1 && 
-                            var location = component.short_name;
-                            OneSignal.sendTag("location", location);
-                            OneSignal.sendTag("zoneName", moment.tz.guess());
-                            showLocationInfo(location);
-
-                            break;
+                    var results = data.results;
+                    var location = '';
+                    // get longest locality
+                    for (var r = 0; r < results.length; r++) {
+                        var components = results[r].address_components;
+                        for (var i = 0; i < components.length; i++) {
+                            var component = components[i];
+                            if ($.inArray('locality', component.types) != -1) { //$.inArray('political', component.types)!=-1 &&
+                                if (component.short_name.length > location.length) {
+                                    location = component.short_name;
+                                    console.log(location);
+                                }
+                            }
                         }
                     }
+
+                    OneSignal.sendTag("location", location);
+                    OneSignal.sendTag("zoneName", moment.tz.guess());
+                    showLocationInfo(location);
                 }
             }
         });

@@ -1,5 +1,6 @@
 var appId = '2b535ce7-1ca1-4950-813f-2d89c9f281c2';
 var https = require('https');
+var http = require('http');
 var request = require('request');
 var parse = require('csv-parse');
 var zlib = require('zlib');
@@ -13,7 +14,7 @@ var _users = {}; //keyed by id
 var _triggers = {}; //keyed by HH:mm
 
 var _lastKeepAliveCall = new Date();
-var _keepAliveMinutes = 27;
+var _keepAliveMinutes = 25;
 var _keepAliveUrl = process.env.BASEURL || "https://wondrous-badi.herokuapp.com/keepAlive";
 
 var manuallyStopped = false;
@@ -76,7 +77,7 @@ function setWhen(body) {
 
     addAllReminderTriggersForUser(user.id);
 
-    console.log('Triggers loaded:')
+    console.log('Triggers active:')
     console.log(_triggers);
 
     return {
@@ -279,7 +280,7 @@ function addNextSunTriggerFor(info) {
 
     addTrigger(when, info);
 
-    console.log('Triggers loaded:')
+    console.log('Triggers active:')
     console.log(_triggers);
 }
 
@@ -288,7 +289,7 @@ function dumpInfo() {
     console.log('Users:');
     console.log(_users);
 
-    console.log('Triggers loaded:')
+    console.log('Triggers active:')
     console.log(_triggers);
     console.log('------------------- END DUMP 1 --------------------------');
 
@@ -379,7 +380,12 @@ function OLD_determineSunTriggerTime(which, nowTz, noonTz, tomorrowNoonTz, idToP
 function doReminders() {
 
     var serverWhen = moment().format('HH:mm');
-    console.log(`Checking reminders for ${serverWhen} (server time)`)
+
+    var now = new Date();
+    var age = now - _lastKeepAliveCall;
+    var minutes = Math.floor(age / 1000 / 60);
+
+    console.log(`Checking reminders for ${serverWhen} (${minutes} minutes since keep alive))`)
 
     var remindersAtWhen = _triggers[serverWhen];
     if (remindersAtWhen) {
@@ -400,63 +406,20 @@ function doReminders() {
         }
     }
 
-    keepServerAlive();
+    keepServerAlive(minutes);
 }
 
-function keepServerAlive() {
-    var now = new Date();
-    var age = now - _lastKeepAliveCall;
-    var minutes = age / 1000 / 60;
-    // console.log('keep alive age: ' + minutes)
-    if (minutes > _keepAliveMinutes) {
+function keepServerAlive(minutes) {
+    if (minutes >= _keepAliveMinutes) {
         console.log('calling keepAlive url at ' + _keepAliveUrl);
-        https.get(_keepAliveUrl);
-        _lastKeepAliveCall = now;
-    }
-}
+        if (_keepAliveUrl.substring(0, 5) === 'https') {
+            https.get(_keepAliveUrl);
+        } else {
+            http.get(_keepAliveUrl);
 
-function OLD_processReminders(currentId, answers, deleteReminders) {
-    var num = 0;
-
-    // reminders are shared... storage is not multi-user, so use it for very short times!
-    var reminders = storage.getItem('reminders') || {};
-    var saveNeeded = false;
-
-    for (var when in reminders) {
-        if (reminders.hasOwnProperty(when)) {
-            var remindersAtWhen = reminders[when];
-            for (var id in remindersAtWhen) {
-                if (id === currentId) {
-                    var info = remindersAtWhen[id];
-
-
-                    if (deleteReminders) {
-
-                        //TODO find reminder at actual time!
-
-                        delete remindersAtWhen[id];
-                        saveNeeded = true;
-                        answers.push(`Removed reminder at ${info.userTime || when}.`);
-                    } else {
-                        if (info.sunTrigger) {
-                            answers.push(`The next ${info.sunTrigger} reminder will be at ${info.userTime}.`);
-                        } else {
-                            answers.push(`➢ Remind at ${info.userTime || when}`);
-                        }
-                    }
-                    num++;
-                }
-            }
-            if (Object.keys(remindersAtWhen).length === 0) {
-                delete reminders[when];
-                saveNeeded = true;
-            }
         }
+        _lastKeepAliveCall = new Date();
     }
-    if (saveNeeded) {
-        storage.setItem('reminders', reminders);
-    }
-    return num;
 }
 
 function sendReminder(id) {
@@ -550,6 +513,7 @@ function retrieveKnownUsers() {
         res.on('data', function (data) {
             var result = JSON.parse(data);
             var fileUrl = result.csv_file_url;
+            // console.log('CSV prepared at ' + fileUrl);
             if (fileUrl) {
                 // file is never ready instantly... give some time for the file to be prepared
                 setTimeout(function () {
@@ -573,10 +537,10 @@ function retrieveKnownUsers() {
 var _remoteCsvLoadAttempts = 0;
 
 function loadRemoteCsvFile(url) {
-    const maxAttempts = 60;
+    const maxAttempts = 5;
 
     _remoteCsvLoadAttempts++;
-    console.log(`Loading remote CSV, attempt ${_remoteCsvLoadAttempts}...`);
+    console.log(`Loading remote CSV, attempt ${_remoteCsvLoadAttempts}`);
 
     request({
         method: 'GET',
@@ -584,13 +548,15 @@ function loadRemoteCsvFile(url) {
         encoding: null,
         gzip: true
     }, function (error, response, body) {
+        // console.log(response.statusCode);
         if (response.statusCode == 403) {
             if (_remoteCsvLoadAttempts < maxAttempts) {
                 setTimeout(function () {
                     loadRemoteCsvFile(url);
-                }, 1000);
+                }, (_remoteCsvLoadAttempts) * 1000);
             } else {
                 console.log(`Gave up getting CSV after ${_remoteCsvLoadAttempts} attempts.`);
+                directlyRetrieveUserList();
             }
             return;
         }
@@ -623,15 +589,55 @@ function processCsv(csvFile) {
     });
 }
 
+function directlyRetrieveUserList() {
+    var headers = {
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": "Basic NjBiYWE4ZWMtMjIzMi00ODk0LTk4YzItMWNmOGMzYWU3NTM0"
+    };
+
+    var options = {
+        host: "onesignal.com",
+        port: 443,
+        path: "/api/v1/players?app_id=" + appId,
+        method: "GET",
+        headers: headers,
+    };
+
+    var req = https.request(options, function (res) {
+        var data = [];
+
+        res.on('data', function (chunk) {
+            data.push(chunk);
+        });
+        res.on('end', function () {
+            var binary = Buffer.concat(data);
+            // binary is your data
+            var result = JSON.parse(binary.toString());
+            console.log('receiving ' + result.total_count);
+            _rawUserList = result.players;
+            setupSchedulesForAllUsers();
+        });
+
+
+    }).on('error', function (e) {
+        console.log("ERROR:");
+        console.log(e);
+    });
+
+    console.log('Getting list of current users');
+    req.end();
+}
+
 function setupSchedulesForAllUsers() {
     var withTags = 0;
     // extract only those with tags
     for (var i = 0, m = _rawUserList.length; i < m; i++) {
         var user = _rawUserList[i];
+        // console.log(user);
         if (user.tags) {
             _users[user.id] = {
                 id: user.id,
-                tags: convertTags(user.tags),
+                tags: typeof user.tags === 'string' ? convertTags(user.tags) : user.tags,
                 language: user.language,
                 minutesOffset: 0  // will be updated later
             };
@@ -645,7 +651,7 @@ function setupSchedulesForAllUsers() {
             addAllReminderTriggersForUser(id);
         }
     }
-    console.log('Triggers loaded:')
+    console.log('Triggers active:')
     console.log(_triggers);
 
     startReminderTimer();
@@ -687,4 +693,4 @@ module.exports = {
 };
 
 retrieveKnownUsers();
-
+// directlyRetrieveUserList();

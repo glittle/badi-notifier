@@ -14,7 +14,7 @@
     <h2>Setup</h2>
 
     <p class="step2_">&#10144; Checking notification status...</p>
-    <p class="step2 step2_false">&#10144; Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer.</p>
+    <p class="step2 step2_false">&#10144; Click <button type="button" id="btnEnableNotification">Get Notifications</button> to enable notifications on this computer. Then <a href="#" onclick="location.href=location.href">refresh</a> the page to confirm if it worked!</p>
     <p class="step2 step2_true">&#10004; You have enabled notifications on this device.</p>
     <blockquote class="step2 step2_true"><button class="testNow">Send a notification now!</button></blockquote>
 
