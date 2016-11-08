@@ -17,6 +17,8 @@ var _lastKeepAliveCall = new Date();
 var _keepAliveMinutes = 25;
 var _keepAliveUrl = process.env.BASEURL || "https://wondrous-badi.herokuapp.com/keepAlive";
 
+var serverZone = moment.tz.guess();
+console.log('server zone: ' + serverZone);
 var manuallyStopped = false;
 var reminderInterval = null;
 
@@ -211,13 +213,12 @@ function addAllReminderTriggersForUser(id) {
                 break;
             default:
                 // should be hh:mm
-                var targetTime = moment(trigger, 'H:mm');
+                var targetTime = moment.tz(trigger, 'H:mm', zoneName);
                 if (targetTime.isValid()) {
-                    if (targetTime.isBefore(serverNow, 'minute')) {
+                    if (targetTime.isBefore(nowTz, 'minute')) {
                         targetTime.add(24, 'hours');
                     }
-                    when = moment(serverNow)
-                            .add(1 + targetTime.diff(serverNow, 'minute'), 'minute').format('HH:mm');
+                    when = targetTime.tz(serverZone).format('HH:mm');
                 } else {
                     console.log(`invalid time: ${trigger} for ${id}`);
                     continue;
