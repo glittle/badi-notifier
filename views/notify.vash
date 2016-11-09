@@ -81,7 +81,6 @@
     OneSignal.push(["init", {
       appId: "2b535ce7-1ca1-4950-813f-2d89c9f281c2",
       autoRegister: false,
-      subdomainName: "wondrous-badi",
       notifyButton: {
         enable: false
       },
