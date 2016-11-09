@@ -45,15 +45,15 @@ function getTime(body) {
     var zone = body.zoneName;
 
     var id = body.userId;
-    if(id && !_users[id]){
+    if (id && !_users[id]) {
         _users[id] = {
             id: id
         };
     }
-    if(_users[id]){
-      var user = _users[id];
-      user.tags.latitude = lat;
-      user.tags.longitude = lng;
+    if (_users[id]) {
+        var user = _users[id];
+        user.tags.latitude = lat;
+        user.tags.longitude = lng;
     }
 
 

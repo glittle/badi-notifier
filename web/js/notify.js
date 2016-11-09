@@ -141,7 +141,7 @@ var Notify = function () {
         }
 
         callAjax('/getTime', {
-            user: setttings.userId,
+            user: settings.userId,
             lat: settings.locationLat,
             lng: settings.locationlng,
             zoneName: moment.tz.guess()
